@@ -1,0 +1,94 @@
+name: Auto-sync SM Playbook
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+  push:
+    branches: [ main, master ]
+
+jobs:
+  sync-repo:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Configure Git
+      run: |
+        git config --global user.name "SM Playbook Auto-sync"
+        git config --global user.email "action@github.com"
+    
+    - name: Check for local changes
+      id: changes
+      run: |
+        if git diff --quiet && git diff --staged --quiet; then
+          echo "changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "changes=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit and push changes
+      if: steps.changes.outputs.changes == 'true'
+      run: |
+        git add .
+        git commit -m "Auto-sync: Update playbook content $(date '+%Y-%m-%d %H:%M:%S')"
+        git push origin HEAD
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Update repository statistics
+      run: |
+        echo "Repository synced at $(date)" >> sync-log.txt
+        git add sync-log.txt
+        if ! git diff --staged --quiet; then
+          git commit -m "Update sync log $(date '+%Y-%m-%d %H:%M:%S')"
+          git push origin HEAD
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  health-check:
+    runs-on: ubuntu-latest
+    needs: sync-repo
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Verify repository health
+      run: |
+        echo "Checking repository structure..."
+        test -f README.md
+        test -d trading-code
+        test -d playbook
+        echo "Repository health check passed!"
+    
+    - name: Generate sync report
+      run: |
+        echo "# SM Playbook Sync Report" > sync-report.md
+        echo "Generated: $(date)" >> sync-report.md
+        echo "" >> sync-report.md
+        echo "## Repository Status" >> sync-report.md
+        echo "- Last sync: $(date)" >> sync-report.md
+        echo "- Repository size: $(du -sh . | cut -f1)" >> sync-report.md
+        echo "- Number of files: $(find . -type f | wc -l)" >> sync-report.md
+        echo "- Git status: Synced" >> sync-report.md
+    
+    - name: Upload sync report
+      uses: actions/upload-artifact@v3
+      with:
+        name: sync-report
+        path: sync-report.md
+        retention-days: 30

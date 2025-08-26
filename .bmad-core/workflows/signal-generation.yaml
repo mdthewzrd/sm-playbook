@@ -1,0 +1,65 @@
+# signal-generation
+
+name: "Signal Generation Workflow"
+id: "signal-generation"
+description: "Generate and validate trading signals based on playbook strategies"
+version: "1.0"
+
+stages:
+  - id: select_strategies
+    agent: trading-orchestrator
+    name: "Select Strategies from Playbook"
+    description: "Choose appropriate strategies based on current market conditions"
+    artifacts:
+      - strategy_selection.md
+    next: market_analysis
+    
+  - id: market_analysis
+    agent: indicator-developer
+    name: "Analyze Current Market Conditions"
+    description: "Evaluate current market regime and conditions"
+    artifacts:
+      - market_analysis.md
+      - regime_identification.md
+    next: generate_signals
+    
+  - id: generate_signals
+    agent: trading-orchestrator
+    name: "Generate Trading Signals"
+    description: "Apply strategy rules to current market data"
+    artifacts:
+      - raw_signals.md
+    next: validate_signals
+    
+  - id: validate_signals
+    agent: execution-engineer
+    name: "Validate Trading Signals"
+    description: "Verify signals against risk parameters and execution rules"
+    artifacts:
+      - validated_signals.md
+      - risk_assessment.md
+    next: prioritize_signals
+    
+  - id: prioritize_signals
+    agent: trading-orchestrator
+    name: "Prioritize Trading Signals"
+    description: "Rank signals by confidence and expected value"
+    artifacts:
+      - prioritized_signals.md
+    next: prepare_execution
+    
+  - id: prepare_execution
+    agent: execution-engineer
+    name: "Prepare Execution Plan"
+    description: "Create detailed execution plan for validated signals"
+    artifacts:
+      - execution_plan.md
+      - position_sizing.md
+    next: complete
+    
+  - id: complete
+    agent: trading-orchestrator
+    name: "Workflow Completion"
+    description: "Finalize signal generation process"
+    artifacts:
+      - signal_summary.md

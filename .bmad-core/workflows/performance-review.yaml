@@ -1,0 +1,91 @@
+# performance-review
+
+name: "Performance Review Workflow"
+id: "performance-review"
+description: "Review and optimize existing trading strategies based on performance data"
+version: "1.0"
+
+stages:
+  - id: select_strategies
+    agent: trading-orchestrator
+    name: "Select Strategies for Review"
+    description: "Choose strategies that need performance review"
+    artifacts:
+      - strategy_selection.md
+    next: collect_performance_data
+    
+  - id: collect_performance_data
+    agent: backtesting-engineer
+    name: "Collect Performance Data"
+    description: "Gather historical performance data for selected strategies"
+    artifacts:
+      - performance_data.md
+    next: calculate_metrics
+    
+  - id: calculate_metrics
+    agent: backtesting-engineer
+    name: "Calculate Performance Metrics"
+    description: "Compute comprehensive performance metrics"
+    artifacts:
+      - performance_metrics.md
+    next: analyze_performance
+    
+  - id: analyze_performance
+    agent: backtesting-engineer
+    name: "Analyze Performance"
+    description: "Perform detailed analysis of strategy performance"
+    artifacts:
+      - performance_analysis.md
+    next: identify_issues
+    
+  - id: identify_issues
+    agent: strategy-designer
+    name: "Identify Performance Issues"
+    description: "Identify areas for improvement in strategy performance"
+    artifacts:
+      - performance_issues.md
+    next: develop_optimizations
+    
+  - id: develop_optimizations
+    agent: strategy-designer
+    name: "Develop Optimization Proposals"
+    description: "Create proposals for strategy optimization"
+    artifacts:
+      - optimization_proposals.md
+    next: validate_optimizations
+    
+  - id: validate_optimizations
+    agent: backtesting-engineer
+    name: "Validate Optimization Proposals"
+    description: "Test and validate proposed optimizations"
+    artifacts:
+      - optimization_validation.md
+    next: implementation_decision
+    
+  - id: implementation_decision
+    agent: trading-orchestrator
+    name: "Make Implementation Decision"
+    description: "Decide which optimizations to implement"
+    artifacts:
+      - implementation_decision.md
+    condition: "${artifacts.optimization_validation.improvements_found == true}"
+    decisions:
+      - outcome: true
+        next: implement_changes
+      - outcome: false
+        next: complete
+    
+  - id: implement_changes
+    agent: strategy-designer
+    name: "Implement Strategy Changes"
+    description: "Update strategy specifications with approved optimizations"
+    artifacts:
+      - updated_strategy.md
+    next: complete
+    
+  - id: complete
+    agent: trading-orchestrator
+    name: "Workflow Completion"
+    description: "Finalize performance review process"
+    artifacts:
+      - review_summary.md

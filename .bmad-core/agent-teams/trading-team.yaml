@@ -1,0 +1,17 @@
+# <!-- Powered by BMAD™ Core -->
+bundle:
+  name: "SM Playbook Team"
+  icon: "📊"
+  description: "Specialized agents for trading strategy development and execution"
+agents:
+  - bmad-orchestrator
+  - trading-orchestrator
+  - strategy-designer
+  - backtesting-engineer
+  - execution-engineer
+  - indicator-developer
+workflows:
+  - strategy-development
+  - signal-generation
+  - market-analysis
+  - performance-review

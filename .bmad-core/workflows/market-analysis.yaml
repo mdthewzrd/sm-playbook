@@ -1,0 +1,70 @@
+# market-analysis
+
+name: "Market Analysis Workflow"
+id: "market-analysis"
+description: "Analyze current market conditions and identify regime characteristics"
+version: "1.0"
+
+stages:
+  - id: collect_market_data
+    agent: indicator-developer
+    name: "Collect Market Data"
+    description: "Gather relevant market data for analysis"
+    artifacts:
+      - market_data.md
+    next: calculate_indicators
+    
+  - id: calculate_indicators
+    agent: indicator-developer
+    name: "Calculate Technical Indicators"
+    description: "Compute relevant technical indicators for market analysis"
+    artifacts:
+      - indicator_calculations.md
+    next: identify_regime
+    
+  - id: identify_regime
+    agent: trading-orchestrator
+    name: "Identify Market Regime"
+    description: "Determine current market regime characteristics"
+    artifacts:
+      - regime_identification.md
+    next: correlation_analysis
+    
+  - id: correlation_analysis
+    agent: backtesting-engineer
+    name: "Perform Correlation Analysis"
+    description: "Analyze correlations between instruments and factors"
+    artifacts:
+      - correlation_analysis.md
+    next: volatility_assessment
+    
+  - id: volatility_assessment
+    agent: indicator-developer
+    name: "Assess Market Volatility"
+    description: "Evaluate current volatility levels and characteristics"
+    artifacts:
+      - volatility_assessment.md
+    next: generate_insights
+    
+  - id: generate_insights
+    agent: trading-orchestrator
+    name: "Generate Market Insights"
+    description: "Create actionable insights based on market analysis"
+    artifacts:
+      - market_insights.md
+    next: strategy_recommendations
+    
+  - id: strategy_recommendations
+    agent: strategy-designer
+    name: "Provide Strategy Recommendations"
+    description: "Recommend strategy adjustments based on market conditions"
+    artifacts:
+      - strategy_recommendations.md
+    next: complete
+    
+  - id: complete
+    agent: trading-orchestrator
+    name: "Workflow Completion"
+    description: "Finalize market analysis process"
+    artifacts:
+      - analysis_summary.md

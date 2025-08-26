@@ -1,0 +1,188 @@
+# SM Playbook BMad Trading System .gitignore
+
+# Environment Variables (CRITICAL - Never commit API keys!)
+.env
+*.env
+.env.local
+.env.production
+
+# API Keys and Secrets
+**/api_keys.py
+**/secrets.py
+**/credentials.json
+**/keys/
+api_keys/
+secrets/
+
+# Trading Data (Large files, market data)
+trading-data/*.csv
+trading-data/*.json
+trading-data/historical/
+trading-data/tick_data/
+trading-data/market/*.csv
+trading-data/fundamentals/*.csv
+trading-data/cache/
+
+# Backtest Results (Can be large)
+backtest-results/*.csv
+backtest-results/*.pkl
+backtest-results/detailed/
+backtest-results/charts/
+backtest-results/cache/
+
+# Trading Logs (Contains sensitive trading info)
+trading-logs/*.log
+trading-logs/archive/
+logs/
+*.log
+
+# Python Virtual Environment
+bmad_env/
+venv/
+env/
+ENV/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebooks (if used)
+.ipynb_checkpoints/
+*.ipynb
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+trading_data.db
+
+# Configuration overrides
+config/local_*.yaml
+config/*_local.yaml
+config/production.yaml
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Reports (Can regenerate)
+reports/*.html
+reports/*.pdf
+reports/charts/
+
+# Cache directories
+.cache/
+cache/
+.pytest_cache/
+.coverage
+
+# Broker-specific files (may contain account info)
+ib_data/
+alpaca_data/
+broker_cache/
+
+# Performance data (sensitive)
+performance_data/
+portfolio_snapshots/
+
+# Compiled indicators (can be regenerated)
+trading-code/indicators/*.pyc
+trading-code/indicators/__pycache__/
+
+# Test outputs
+test_results/
+coverage_reports/
+
+# Documentation builds
+docs/_build/
+docs/site/
+
+# Node modules (if any JavaScript tools)
+node_modules/
+
+# Backup files
+*.bak
+*.backup
+backup/
+
+# Trading journal (may contain sensitive info)
+# Uncomment if you want to keep journal private
+# trading-journal/
+
+# Personal notes
+notes/
+personal/
+private/
+
+# Lock files
+poetry.lock
+Pipfile.lock
+
+# Large model files
+*.pkl
+*.pickle
+models/
+trained_models/
+
+# Market data feeds (real-time)
+market_feeds/
+live_data/
+
+# Risk management overrides (sensitive)
+config/risk_overrides.yaml
+risk_limits_personal.yaml
+
+# Auto-generated files
+auto_generated/
+generated/
+
+# Monitoring data
+monitoring_data/
+metrics/
+
+# Deployment files
+deployment/
+docker-compose.override.yml
+
+# Keep these files but ignore sensitive variations
+!.env.template
+!config/bmad_config.yaml
+!trading-logs/.gitkeep
+!trading-data/.gitkeep
+!backtest-results/.gitkeep

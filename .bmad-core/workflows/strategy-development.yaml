@@ -1,0 +1,102 @@
+# strategy-development
+
+name: "Strategy Development Workflow"
+id: "strategy-development"
+description: "Complete workflow for developing trading strategies from Lingua documentation to validated playbook entries"
+version: "1.0"
+
+stages:
+  - id: formalize_strategy
+    agent: strategy-designer
+    name: "Formalize Trading Strategy"
+    description: "Develop formal strategy specification from Lingua concept"
+    artifacts:
+      - strategy_specification.md
+      - indicator_requirements.md
+      - risk_parameters.md
+    next: indicators_decision
+    
+  - id: indicators_decision
+    agent: trading-orchestrator
+    name: "Indicator Implementation Decision"
+    description: "Determine if custom indicators need to be implemented"
+    condition: "${artifacts.indicator_requirements.custom_indicators_needed == true}"
+    decisions:
+      - outcome: true
+        next: implement_indicators
+      - outcome: false
+        next: setup_backtest
+    
+  - id: implement_indicators
+    agent: indicator-developer
+    name: "Implement Required Indicators"
+    description: "Develop and test custom indicators required by strategy"
+    artifacts:
+      - implemented_indicators.md
+      - indicator_tests.md
+    next: setup_backtest
+    
+  - id: setup_backtest
+    agent: backtesting-engineer
+    name: "Configure Backtesting Environment"
+    description: "Set up environment for strategy backtesting"
+    artifacts:
+      - backtest_configuration.md
+      - strategy_implementation.md
+    next: execute_backtest
+    
+  - id: execute_backtest
+    agent: backtesting-engineer
+    name: "Execute Strategy Backtesting"
+    description: "Run comprehensive backtests on the strategy"
+    artifacts:
+      - backtest_results.md
+      - trade_history.md
+    next: analyze_performance
+    
+  - id: analyze_performance
+    agent: backtesting-engineer
+    name: "Analyze Strategy Performance"
+    description: "Evaluate strategy performance against requirements"
+    artifacts:
+      - performance_report.md
+      - validation_decision.md
+    next: validate_strategy
+    
+  - id: validate_strategy
+    agent: trading-orchestrator
+    name: "Make Validation Decision"
+    description: "Determine if strategy meets requirements for playbook"
+    artifacts:
+      - final_validation.md
+    condition: "${artifacts.validation_decision.recommendation == 'PASS'}"
+    decisions:
+      - outcome: true
+        next: add_to_playbook
+      - outcome: false
+        next: strategy_improvement
+    
+  - id: add_to_playbook
+    agent: trading-orchestrator
+    name: "Add Strategy to Trading Playbook"
+    description: "Formalize strategy as official playbook entry"
+    artifacts:
+      - playbook_entry.md
+      - signal_config.md
+    next: complete
+    
+  - id: strategy_improvement
+    agent: strategy-designer
+    name: "Strategy Improvement Planning"
+    description: "Plan revisions to improve strategy performance"
+    artifacts:
+      - improvement_plan.md
+      - revised_specification.md
+    next: complete
+    
+  - id: complete
+    agent: trading-orchestrator
+    name: "Workflow Completion"
+    description: "Finalize workflow and summarize results"
+    artifacts:
+      - workflow_summary.md
