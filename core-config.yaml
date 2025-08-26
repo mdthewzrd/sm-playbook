@@ -1,0 +1,91 @@
+project:
+  name: "Trading System Playbook"
+  description: "Algorithmic trading system based on Lingua trading language and MCP architecture"
+  version: "1.0.0"
+  type: "trading-system"
+  
+bmad:
+  version: "2024.1"
+  framework: "bmad-method"
+  agents:
+    orchestrator: true
+    pm: true
+    architect: true
+    sm: true
+    dev: true
+    qa: true
+    trading_orchestrator: true
+    strategy_designer: true
+    indicator_developer: true
+    backtesting_engineer: true
+
+docs:
+  prd: "docs/prd.md"
+  architecture: "docs/architecture.md"
+  stories: "docs/stories/"
+  technical_preferences: "docs/technical-preferences.md"
+  
+trading:
+  language: "lingua"
+  data_sources:
+    - "polygon.io"
+    - "osengine"
+  brokers:
+    - "osengine"
+  backtesting:
+    - "backtesting.py"
+    - "custom_engine"
+  indicators:
+    - "talib"
+    - "custom_lingua"
+  
+mcp:
+  enabled: true
+  servers:
+    - name: "notion"
+      type: "documentation"
+      config: "mcp-integration/config/notion.json"
+    - name: "backtesting"
+      type: "backtesting"
+      config: "mcp-integration/config/backtesting.json"
+    - name: "talib"
+      type: "indicators"
+      config: "mcp-integration/config/talib.json"
+    - name: "osengine"
+      type: "execution"
+      config: "mcp-integration/config/osengine.json"
+    - name: "polygon"
+      type: "data"
+      config: "mcp-integration/config/polygon.json"
+
+preferences:
+  technical: "docs/technical-preferences.md"
+  coding_standards: "docs/coding-standards.md"
+  testing: "docs/testing-guidelines.md"
+  
+development:
+  languages:
+    primary: "typescript"
+    secondary: "python"
+  frameworks:
+    backend: "node.js"
+    data: ["pandas", "numpy"]
+    testing: ["jest", "pytest"]
+  architecture: "mcp"
+  patterns: ["strategy", "observer", "factory"]
+  
+quality:
+  code_coverage: 80
+  test_types: ["unit", "integration", "backtest"]
+  review_required: true
+  
+deployment:
+  environments: ["development", "testing", "production"]
+  ci_cd: true
+  monitoring: true
+  
+metadata:
+  created: "2024-12-08"
+  last_updated: "2024-12-08"
+  repository: "https://github.com/mdthewzrd/sm-playbook"
+  license: "MIT"
