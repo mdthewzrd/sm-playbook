@@ -25,6 +25,9 @@ Foundational trading methodology and principles.
 
 #### [Lingua Trading Language](core/lingua_trading_language.md)
 **The complete discretionary trading framework** - This is the master document that contains:
+
+#### [Lingua Trading Language - Complete Visual Guide](core/lingua_trading_language_complete.md)
+**Full methodology with 64 annotated chart examples** - Visual learning version with:
 - **Trend Cycles**: The 8-stage cycle that drives all market movement
 - **Market Structure**: How trends interact across timeframes  
 - **Daily Context**: Classification system for different setup types
