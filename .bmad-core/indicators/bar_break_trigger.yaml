@@ -1,0 +1,258 @@
+---
+indicator:
+  name: "Bar Break Trigger"
+  id: "bar-break-trigger"
+  version: "1.0.0"
+  category: "confirmation-signal"
+  description: "Precise entry timing mechanism for BRF strategy using multi-timeframe bar break analysis"
+
+concept:
+  purpose: "Provide precise entry timing confirmation when VWAP break setups occur"
+  methodology: "Analyze price action behavior on VWAP breaks with volume confirmation"
+  timeframe_hierarchy: "15m provides setup, 5m provides trigger confirmation"
+
+trigger_conditions:
+  primary_break_trigger:
+    name: "VWAP Break with Volume"
+    timeframe: "5m"
+    conditions:
+      price_action:
+        - "close_below_vwap"
+        - "open_of_next_bar_below_vwap"
+        - "no_lower_wick_exceeding_50_percent_of_body"
+        
+      volume_requirements:
+        - "volume_exceeds_20_period_average_by_30_percent"
+        - "volume_higher_than_previous_3_bars_average"
+        - "volume_not_extreme_spike"  # < 300% of average
+        
+      confirmation_requirements:
+        - "15m_timeframe_shows_same_setup"
+        - "price_within_deviation_bands_target_zone"
+        - "no_immediate_reversal_signals"
+
+  follow_through_confirmation:
+    name: "Continuation Bar Analysis"
+    description: "Next 1-3 bars must show follow-through"
+    timeframe: "5m"
+    
+    bar_1_requirements:
+      price_action:
+        - "opens_at_or_below_previous_close"
+        - "does_not_close_above_vwap"
+        - "shows_selling_pressure_characteristics"
+        
+      volume_characteristics:
+        - "volume_above_recent_average"
+        - "selling_volume_exceeds_buying_volume"
+        
+    bar_2_requirements:
+      price_action:
+        - "continues_downward_momentum"
+        - "any_bounces_are_weak_and_sold"
+        - "maintains_position_below_vwap"
+        
+    bar_3_requirements:
+      price_action:
+        - "establishes_clear_direction"
+        - "no_strong_reversal_patterns"
+        - "momentum_indicators_support_move"
+
+signal_quality_scoring:
+  components:
+    vwap_break_quality:
+      weight: 30
+      factors:
+        - "clean_break_vs_choppy_break"
+        - "angle_of_approach_to_vwap"
+        - "distance_from_vwap_at_break"
+        
+    volume_quality:
+      weight: 25
+      factors:
+        - "volume_surge_magnitude"
+        - "volume_consistency_across_bars"
+        - "volume_profile_distribution"
+        
+    price_action_quality:
+      weight: 25
+      factors:
+        - "body_size_vs_wick_ratio"
+        - "consecutive_bar_consistency"
+        - "lack_of_reversal_patterns"
+        
+    timeframe_alignment:
+      weight: 20
+      factors:
+        - "15m_5m_signal_synchronization"
+        - "higher_timeframe_trend_support"
+        - "deviation_band_position"
+        
+  scoring_scale:
+    excellent: "90-100 points"
+    good: "75-89 points"
+    acceptable: "60-74 points"
+    poor: "< 60 points"
+    
+  minimum_threshold: 70  # Only trigger on acceptable+ signals
+
+timeframe_coordination:
+  15m_setup_requirements:
+    primary_conditions:
+      - "vwap_break_setup_developing"
+      - "deviation_bands_showing_overextension"
+      - "volume_profile_supportive"
+      
+    confirmation_signals:
+      - "momentum_indicators_turning"
+      - "pattern_maturation_visible"
+      - "no_invalidation_signals_present"
+      
+  5m_trigger_requirements:
+    entry_conditions:
+      - "clean_vwap_break_with_volume"
+      - "follow_through_bar_confirmation"
+      - "15m_setup_still_valid"
+      
+    timing_precision:
+      - "trigger_within_first_2_bars_of_15m_setup"
+      - "no_delay_longer_than_10_minutes"
+      - "optimal_trigger_within_5_minutes"
+
+invalidation_conditions:
+  immediate_invalidation:
+    triggers:
+      - "strong_reclaim_above_vwap_with_volume"
+      - "reversal_candlestick_pattern_formation"
+      - "volume_spike_with_bullish_characteristics"
+      
+    response: "cancel_all_pending_entries_immediately"
+    
+  gradual_invalidation:
+    triggers:
+      - "choppy_price_action_around_vwap"
+      - "volume_drying_up_significantly"
+      - "time_decay_beyond_threshold"
+      
+    response: "reduce_position_size_or_wait_for_better_setup"
+    
+  pattern_failure:
+    detection:
+      - "15m_timeframe_shows_pattern_breakdown"
+      - "deviation_bands_no_longer_overextended"
+      - "broader_market_shift_against_setup"
+      
+    response: "abort_strategy_execution"
+
+implementation_logic:
+  real_time_processing:
+    bar_completion_analysis:
+      - "analyze_completed_5m_bar"
+      - "check_vwap_relationship"
+      - "validate_volume_characteristics"
+      - "score_trigger_quality"
+      
+    continuous_monitoring:
+      - "track_15m_setup_validity"
+      - "monitor_invalidation_conditions"
+      - "update_trigger_probability_scores"
+      
+  signal_generation:
+    trigger_sequence:
+      step_1: "15m_setup_identification"
+      step_2: "5m_vwap_break_detection"
+      step_3: "volume_confirmation_check"
+      step_4: "follow_through_analysis"
+      step_5: "final_trigger_signal_generation"
+      
+    output_format:
+      signal_type: "bar_break_trigger"
+      quality_score: "numeric_0_to_100"
+      timeframe: "5m_with_15m_context"
+      timestamp: "iso_format"
+      validity_duration: "maximum_20_minutes"
+
+configuration_parameters:
+  volume_analysis:
+    average_period: 20
+    volume_surge_threshold: 1.3  # 30% above average
+    extreme_volume_threshold: 3.0  # 300% above average
+    
+  price_action:
+    wick_tolerance: 0.5  # 50% of body size
+    bounce_weakness_threshold: 0.3  # 30% retracement max
+    
+  timing_parameters:
+    follow_through_window: 3  # bars
+    trigger_validity_window: 20  # minutes
+    maximum_setup_age: 60  # minutes
+    
+  quality_thresholds:
+    minimum_trigger_score: 70
+    preferred_trigger_score: 85
+    exceptional_trigger_score: 95
+
+output_specifications:
+  primary_signals:
+    trigger_signal:
+      description: "Main bar break trigger signal"
+      values: ["triggered", "pending", "invalid"]
+      
+    quality_score:
+      description: "Trigger quality assessment"
+      range: "0-100"
+      type: "integer"
+      
+    follow_through_status:
+      description: "Follow-through confirmation status"
+      values: ["confirmed", "pending", "failed"]
+      
+  contextual_data:
+    setup_age:
+      description: "Time since 15m setup first identified"
+      unit: "minutes"
+      
+    vwap_break_magnitude:
+      description: "Percentage below VWAP at trigger"
+      unit: "percentage"
+      
+    volume_surge_ratio:
+      description: "Current volume vs average ratio"
+      unit: "ratio"
+      
+  risk_alerts:
+    invalidation_warning:
+      description: "Early warning of potential invalidation"
+      urgency: ["low", "medium", "high", "critical"]
+      
+    pattern_failure_alert:
+      description: "Pattern breakdown detection"
+      response_required: "immediate"
+
+testing_validation:
+  backtesting_requirements:
+    - "historical_trigger_accuracy"
+    - "false_signal_rate_analysis"
+    - "optimal_parameter_identification"
+    - "market_condition_performance"
+    
+  forward_testing:
+    - "real_time_signal_generation"
+    - "execution_timing_precision"
+    - "invalidation_detection_speed"
+    
+  performance_metrics:
+    - "trigger_to_profit_conversion_rate"
+    - "average_time_to_invalidation"
+    - "signal_quality_correlation_with_outcomes"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "indicator-developer"
+  complexity: "high"
+  dependencies:
+    - "vwap_multi_timeframe"
+    - "lingua_atr_deviation_bands"
+    - "volume_analysis_engine"
+  integration_priority: "critical"
+  estimated_implementation_time: "5_days"

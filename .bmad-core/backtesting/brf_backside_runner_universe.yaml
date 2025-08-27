@@ -1,0 +1,213 @@
+---
+backside_runner_universe:
+  name: "BRF Backside Runner Stock Universe Definition"
+  id: "brf-backside-runner-universe"
+  version: "1.0.0"
+  description: "Comprehensive definition and selection criteria for stocks exhibiting backside runner patterns"
+
+universe_definition:
+  pattern_characteristics:
+    core_pattern_definition:
+      description: "Stocks showing multi-day uptrend followed by consolidation/pullback setup"
+      timeframe: "daily_pattern_with_intraday_execution"
+      
+    historical_behavior:
+      uptrend_phase:
+        minimum_duration: "3_consecutive_up_days"
+        volume_characteristics: "expansion_on_up_days"
+        price_momentum: "above_20_day_moving_average"
+        
+      consolidation_phase:
+        duration_range: "1_to_3_days"
+        price_behavior: "sideways_to_slight_pullback"
+        volume_behavior: "contraction_acceptable"
+        
+      reversal_setup:
+        vwap_relationship: "price_near_or_above_session_vwap"
+        deviation_characteristics: "overextension_from_mean"
+        momentum_divergence: "signs_of_exhaustion"
+
+stock_selection_criteria:
+  fundamental_filters:
+    market_capitalization:
+      minimum_market_cap: "100_million"
+      maximum_market_cap: "10_billion"
+      preferred_range: "500M_to_5B"
+      
+    liquidity_requirements:
+      minimum_avg_daily_volume: "1_million_shares"
+      minimum_avg_dollar_volume: "10_million_daily"
+      preferred_avg_daily_volume: "3_million_plus_shares"
+      
+    price_requirements:
+      minimum_price: "5_dollars"
+      maximum_price: "100_dollars"
+      preferred_range: "10_to_50_dollars"
+      
+    financial_health:
+      exclude_bankruptcies: "exclude_stocks_in_bankruptcy"
+      exclude_penny_stocks: "exclude_otc_and_pink_sheets"
+      minimum_operating_history: "6_months_public_trading"
+      
+  technical_filters:
+    volatility_characteristics:
+      minimum_volatility: "15_percent_annualized"
+      maximum_volatility: "80_percent_annualized"
+      preferred_range: "25_to_60_percent"
+      
+    trend_characteristics:
+      recent_performance: "outperformed_market_last_30_days"
+      momentum_indicators: "positive_momentum_signals_present"
+      
+    pattern_frequency:
+      historical_pattern_occurrence: "shown_backside_runner_pattern_historically"
+      pattern_success_rate: "historical_reversal_success_rate_above_50_percent"
+
+sector_and_industry_analysis:
+  sector_distribution:
+    technology: "20_to_30_percent_allocation"
+    healthcare_biotech: "15_to_25_percent_allocation"
+    consumer_discretionary: "10_to_20_percent_allocation"
+    industrials: "10_to_15_percent_allocation"
+    other_sectors: "remaining_allocation"
+    
+  sector_rotation_considerations:
+    momentum_sectors: "sectors_showing_relative_strength"
+    defensive_sectors: "may_show_fewer_patterns_but_more_reliable"
+    cyclical_sectors: "higher_pattern_frequency_in_favorable_cycles"
+    
+  industry_specific_patterns:
+    biotech_patterns: "news_driven_momentum_followed_by_consolidation"
+    tech_patterns: "earnings_momentum_and_guidance_reactions"
+    retail_patterns: "seasonal_and_consumer_trend_driven"
+
+historical_universe_construction:
+  lookback_methodology:
+    pattern_identification_period: "rolling_60_day_lookback"
+    pattern_validation_period: "minimum_10_trading_days_post_setup"
+    pattern_success_definition: "achieved_stage_1_or_stage_2_profit_targets"
+    
+  universe_size_management:
+    target_universe_size: "200_to_500_stocks_actively_monitored"
+    maximum_universe_size: "1000_stocks_total_database"
+    minimum_universe_size: "100_stocks_to_ensure_opportunities"
+    
+  refresh_methodology:
+    daily_screening: "identify_new_pattern_candidates"
+    weekly_review: "validate_existing_universe_members"
+    monthly_rebalance: "add_remove_based_on_performance_criteria"
+
+pattern_scoring_system:
+  quantitative_scoring_components:
+    trend_strength_score:
+      weight: "25_percent"
+      calculation: "days_of_uptrend * volume_quality * price_momentum"
+      max_score: "25_points"
+      
+    consolidation_quality_score:
+      weight: "20_percent"
+      calculation: "range_tightness * time_factor * volume_behavior"
+      max_score: "20_points"
+      
+    setup_quality_score:
+      weight: "30_percent"
+      calculation: "vwap_relationship * deviation_bands * momentum_indicators"
+      max_score: "30_points"
+      
+    historical_success_score:
+      weight: "25_percent"
+      calculation: "past_pattern_success_rate * similar_setup_outcomes"
+      max_score: "25_points"
+      
+  scoring_thresholds:
+    minimum_qualifying_score: "60_points_out_of_100"
+    good_opportunity_score: "75_points_out_of_100"
+    excellent_opportunity_score: "85_points_out_of_100"
+
+universe_validation_methodology:
+  backtesting_validation:
+    historical_performance_test:
+      test_period: "2_years_historical_data"
+      success_criteria: "universe_outperforms_random_stock_selection"
+      minimum_sample_size: "500_patterns_minimum"
+      
+    pattern_reliability_test:
+      success_rate_requirement: "minimum_55_percent_profitable_patterns"
+      consistency_requirement: "quarterly_success_rates_above_45_percent"
+      
+  forward_testing_validation:
+    paper_trading_period: "3_months_forward_testing"
+    real_time_pattern_identification: "validate_pattern_recognition_accuracy"
+    execution_feasibility: "confirm_liquidity_and_execution_assumptions"
+    
+  statistical_validation:
+    significance_testing: "validate_outperformance_statistical_significance"
+    robustness_testing: "test_across_different_market_conditions"
+    stability_testing: "validate_consistent_pattern_characteristics"
+
+dynamic_universe_management:
+  market_regime_adjustments:
+    bull_market_regime:
+      universe_size_adjustment: "expand_universe_more_opportunities"
+      scoring_threshold_adjustment: "raise_thresholds_more_selective"
+      
+    bear_market_regime:
+      universe_size_adjustment: "contract_universe_focus_on_quality"
+      scoring_threshold_adjustment: "lower_thresholds_fewer_opportunities"
+      
+    volatile_market_regime:
+      universe_size_adjustment: "maintain_standard_size"
+      scoring_threshold_adjustment: "emphasize_setup_quality_scores"
+      
+  seasonal_adjustments:
+    earnings_season_adjustments:
+      pattern_recognition: "account_for_earnings_driven_momentum"
+      risk_adjustment: "higher_volatility_expectations"
+      
+    holiday_season_adjustments:
+      volume_considerations: "account_for_reduced_liquidity"
+      pattern_reliability: "may_show_different_success_rates"
+
+universe_monitoring_and_alerts:
+  real_time_monitoring:
+    new_pattern_alerts: "automated_identification_of_new_candidates"
+    pattern_maturation_alerts: "existing_patterns_approaching_entry_points"
+    pattern_invalidation_alerts: "patterns_breaking_down_or_failing"
+    
+  universe_health_metrics:
+    pattern_success_rate_tracking: "rolling_success_rate_monitoring"
+    universe_performance_attribution: "contribution_analysis_by_sectors"
+    pattern_frequency_analysis: "opportunity_frequency_over_time"
+    
+  quality_assurance:
+    false_positive_monitoring: "track_patterns_that_failed_quickly"
+    missed_opportunity_analysis: "patterns_excluded_that_worked"
+    universe_drift_detection: "ensure_universe_characteristics_stable"
+
+implementation_specifications:
+  data_requirements:
+    fundamental_data: "market_cap_sector_financial_metrics"
+    technical_data: "ohlcv_data_with_volume_profile"
+    pattern_history: "database_of_historical_pattern_occurrences"
+    
+  computational_requirements:
+    screening_algorithms: "efficient_pattern_recognition_algorithms"
+    scoring_calculations: "real_time_scoring_engine"
+    universe_management: "automated_universe_maintenance_system"
+    
+  integration_points:
+    strategy_execution: "seamless_integration_with_brf_strategy"
+    risk_management: "universe_constraints_integrated_with_risk_rules"
+    performance_attribution: "tracking_performance_by_universe_selection"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "backtesting-engineer"
+  complexity: "high"
+  dependencies:
+    - "comprehensive_market_data"
+    - "pattern_recognition_algorithms"
+    - "historical_performance_database"
+  estimated_implementation_time: "1_week"
+  validation_priority: "critical_for_strategy_effectiveness"
+  update_frequency: "daily_screening_weekly_review_monthly_rebalance"

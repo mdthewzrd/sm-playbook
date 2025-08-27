@@ -1,0 +1,324 @@
+---
+parameter_optimization_engine:
+  name: "BRF Strategy Parameter Optimization System"
+  id: "brf-parameter-optimization"
+  version: "1.0.0"
+  description: "Advanced parameter optimization engine for maximizing BRF strategy performance"
+
+optimization_philosophy:
+  primary_objective: "Maximize risk-adjusted returns while maintaining robust performance across market regimes"
+  methodology: "Multi-objective optimization with walk-forward validation"
+  robustness_focus: "Prioritize parameter stability over peak performance"
+
+parameter_space_definition:
+  indicator_parameters:
+    vwap_parameters:
+      session_definition:
+        start_time: "09_30_to_10_00"  # range to optimize
+        reset_behavior: "daily_vs_rolling"
+        
+    deviation_bands_parameters:
+      atr_period:
+        range: "10_to_20_periods"
+        default: "14_periods"
+        step_size: "2_periods"
+        
+      band_multiplier:
+        range: "1_5_to_3_0"
+        default: "2_0"
+        step_size: "0_1"
+        
+      adaptive_multiplier_sensitivity:
+        range: "0_5_to_2_0"
+        default: "1_0"
+        step_size: "0_1"
+        
+    bar_break_trigger_parameters:
+      volume_threshold:
+        range: "1_2_to_2_0"  # multiples of average volume
+        default: "1_3"
+        step_size: "0_1"
+        
+      quality_score_threshold:
+        range: "60_to_85"
+        default: "70"
+        step_size: "5"
+        
+      follow_through_requirements:
+        range: "1_to_5_bars"
+        default: "3_bars"
+        step_size: "1_bar"
+        
+  strategy_parameters:
+    entry_parameters:
+      stage_timing_gaps:
+        min_gap_stage_1_to_2:
+          range: "1_to_5_minutes"
+          default: "2_minutes"
+          
+        min_gap_stage_2_to_3:
+          range: "30_seconds_to_3_minutes"
+          default: "1_minute"
+          
+      conviction_thresholds:
+        stage_2_conviction:
+          range: "70_to_85"
+          default: "75"
+          
+        stage_3_conviction:
+          range: "80_to_95"
+          default: "85"
+          
+    exit_parameters:
+      profit_target_multipliers:
+        stage_1_target:
+          range: "0_3_to_0_8_atr"
+          default: "0_5_atr"
+          step_size: "0_1_atr"
+          
+        stage_2_target:
+          range: "0_8_to_1_5_atr"
+          default: "1_0_atr"
+          step_size: "0_1_atr"
+          
+        stage_3_target:
+          range: "1_2_to_2_5_atr"
+          default: "1_5_atr"
+          step_size: "0_2_atr"
+          
+      trailing_stop_parameters:
+        activation_threshold:
+          range: "after_stage_1_to_after_stage_2"
+          default: "after_stage_2"
+          
+        trail_distance:
+          range: "0_5_to_2_0_atr"
+          default: "1_0_atr"
+          step_size: "0_1_atr"
+          
+    risk_parameters:
+      stop_loss_multipliers:
+        initial_stop_multiplier:
+          range: "1_0_to_2_5_atr"
+          default: "1_5_atr"
+          step_size: "0_1_atr"
+          
+      position_sizing_parameters:
+        base_risk_per_trade:
+          range: "1_0_to_3_0_percent"
+          default: "2_0_percent"
+          step_size: "0_2_percent"
+          
+        volatility_adjustment_factor:
+          range: "0_5_to_1_5"
+          default: "1_0"
+          step_size: "0_1"
+
+optimization_methodology:
+  multi_objective_optimization:
+    primary_objectives:
+      risk_adjusted_return:
+        metric: "sharpe_ratio"
+        weight: "40_percent"
+        target: "maximize"
+        
+      maximum_drawdown:
+        metric: "max_drawdown"
+        weight: "30_percent"
+        target: "minimize"
+        
+      win_rate:
+        metric: "percentage_profitable_trades"
+        weight: "20_percent"
+        target: "maximize"
+        
+      profit_factor:
+        metric: "gross_profit_divided_by_gross_loss"
+        weight: "10_percent"
+        target: "maximize"
+        
+    constraint_objectives:
+      minimum_sharpe: "1_2"
+      maximum_drawdown_limit: "15_percent"
+      minimum_win_rate: "55_percent"
+      minimum_profit_factor: "1_3"
+      
+  optimization_algorithms:
+    primary_algorithm:
+      type: "genetic_algorithm"
+      population_size: "100_parameter_sets"
+      generations: "50_iterations"
+      mutation_rate: "0_1"
+      crossover_rate: "0_8"
+      
+    secondary_algorithm:
+      type: "particle_swarm_optimization"
+      swarm_size: "50_particles"
+      iterations: "100"
+      inertia_weight: "0_7"
+      cognitive_coefficient: "2_0"
+      social_coefficient: "2_0"
+      
+    validation_algorithm:
+      type: "grid_search"
+      purpose: "validate_optimal_parameters_robustness"
+      grid_density: "coarse_grid_around_optimal_values"
+      
+  walk_forward_optimization:
+    training_window:
+      size: "12_months_in_sample"
+      minimum_trades: "200_trades_minimum"
+      
+    validation_window:
+      size: "3_months_out_of_sample"
+      minimum_trades: "50_trades_minimum"
+      
+    rolling_schedule:
+      reoptimization_frequency: "quarterly"
+      overlap: "9_month_overlap_between_periods"
+      
+    stability_requirements:
+      parameter_stability: "parameters_within_20_percent_of_previous"
+      performance_stability: "out_of_sample_performance_within_30_percent_of_in_sample"
+
+regime_based_optimization:
+  market_regime_segmentation:
+    volatility_regimes:
+      low_vol: "vix_below_20"
+      high_vol: "vix_above_30"
+      
+    trend_regimes:
+      bull_market: "spy_above_200_day_ma_trending_up"
+      bear_market: "spy_below_200_day_ma_trending_down"
+      sideways_market: "spy_near_200_day_ma_no_clear_trend"
+      
+    correlation_regimes:
+      low_correlation: "average_stock_correlation_below_0_5"
+      high_correlation: "average_stock_correlation_above_0_7"
+      
+  regime_specific_parameters:
+    parameter_adaptation:
+      volatility_adaptation:
+        high_vol_adjustments:
+          - "increase_stop_distances"
+          - "reduce_position_sizes"
+          - "widen_profit_targets"
+          
+        low_vol_adjustments:
+          - "tighten_stop_distances"
+          - "increase_position_sizes"
+          - "take_profits_more_aggressively"
+          
+    regime_switching_rules:
+      parameter_update_triggers:
+        - "regime_change_detection"
+        - "sustained_performance_degradation"
+        - "volatility_regime_shift"
+        
+      transition_smoothing:
+        - "gradual_parameter_adjustment_over_5_days"
+        - "avoid_abrupt_parameter_changes"
+
+robustness_testing:
+  parameter_sensitivity_analysis:
+    sensitivity_metrics:
+      local_sensitivity: "performance_change_per_unit_parameter_change"
+      global_sensitivity: "performance_impact_across_entire_parameter_range"
+      
+    robustness_criteria:
+      stable_performance: "less_than_20_percent_performance_degradation_with_10_percent_parameter_change"
+      smooth_response: "monotonic_or_smooth_performance_response_to_parameter_changes"
+      
+  out_of_sample_validation:
+    holdout_testing:
+      holdout_period: "final_6_months_never_used_in_optimization"
+      acceptance_criteria: "holdout_performance_within_50_percent_of_optimized_performance"
+      
+    monte_carlo_validation:
+      scenario_testing: "test_optimized_parameters_on_1000_bootstrap_samples"
+      confidence_intervals: "95_percent_confidence_interval_for_performance_metrics"
+      
+  stability_over_time:
+    parameter_drift_monitoring:
+      acceptable_drift: "parameters_remain_within_30_percent_of_optimal_over_12_months"
+      drift_correction: "reoptimization_triggered_if_drift_exceeds_threshold"
+      
+    performance_consistency:
+      rolling_performance: "monitor_12_month_rolling_performance_metrics"
+      degradation_threshold: "reoptimization_if_performance_drops_below_80_percent_of_expected"
+
+optimization_execution_framework:
+  computational_requirements:
+    processing_power: "distributed_computing_for_parallel_optimization"
+    memory_requirements: "high_memory_for_large_parameter_spaces"
+    time_requirements: "overnight_optimization_runs_acceptable"
+    
+  data_requirements:
+    historical_data: "minimum_3_years_high_quality_data"
+    benchmark_data: "appropriate_benchmarks_for_comparison"
+    regime_data: "market_regime_classification_data"
+    
+  optimization_pipeline:
+    data_preparation: "clean_and_validate_historical_data"
+    parameter_space_definition: "define_feasible_parameter_ranges"
+    optimization_execution: "run_multi_objective_optimization"
+    validation_testing: "comprehensive_out_of_sample_testing"
+    result_analysis: "analyze_and_interpret_optimization_results"
+    
+performance_attribution:
+  parameter_contribution_analysis:
+    individual_parameter_impact:
+      method: "marginal_contribution_analysis"
+      metrics: "contribution_to_overall_performance_improvement"
+      
+    parameter_interaction_effects:
+      method: "interaction_term_analysis"
+      focus: "identify_synergistic_parameter_combinations"
+      
+  regime_performance_attribution:
+    by_market_regime: "performance_breakdown_by_volatility_trend_correlation_regimes"
+    by_time_period: "performance_attribution_over_different_historical_periods"
+    
+optimization_reporting:
+  optimization_results:
+    optimal_parameters: "best_parameter_set_with_confidence_intervals"
+    performance_metrics: "comprehensive_performance_analysis_of_optimal_parameters"
+    robustness_analysis: "sensitivity_analysis_and_stability_testing_results"
+    
+  comparison_analysis:
+    vs_default_parameters: "performance_improvement_over_default_settings"
+    vs_benchmark_strategies: "comparison_with_buy_and_hold_and_other_benchmarks"
+    
+  recommendation_report:
+    implementation_recommendations: "practical_guidance_for_parameter_implementation"
+    monitoring_recommendations: "ongoing_parameter_monitoring_and_maintenance_guidance"
+    risk_warnings: "potential_risks_and_limitations_of_optimized_parameters"
+
+continuous_optimization:
+  adaptive_optimization:
+    trigger_conditions:
+      - "performance_degradation_below_threshold"
+      - "market_regime_shift_detection"
+      - "parameter_drift_beyond_acceptable_range"
+      
+    reoptimization_schedule:
+      regular_schedule: "quarterly_reoptimization"
+      emergency_reoptimization: "triggered_by_performance_or_regime_changes"
+      
+  learning_mechanisms:
+    performance_feedback_loop: "incorporate_recent_performance_into_optimization"
+    market_evolution_adaptation: "adapt_to_changing_market_microstructure"
+    
+metadata:
+  created: "2025-08-27"
+  created_by: "backtesting-engineer"
+  complexity: "very_high"
+  estimated_implementation_time: "2_weeks"
+  dependencies:
+    - "high_performance_computing_infrastructure"
+    - "comprehensive_historical_database"
+    - "advanced_optimization_libraries"
+  validation_requirements:
+    - "independent_validation_of_optimization_results"
+    - "regulatory_review_of_optimization_methodology"
+    - "ongoing_monitoring_of_parameter_effectiveness"

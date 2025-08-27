@@ -1,0 +1,268 @@
+---
+multitimeframe_testing_framework:
+  name: "BRF Multi-Timeframe Backtesting Engine"
+  id: "brf-mt-backtest-engine"
+  version: "1.0.0"
+  description: "Comprehensive backtesting framework supporting multi-timeframe BRF strategy validation"
+
+framework_architecture:
+  data_management_layer:
+    timeframe_synchronization:
+      primary_timeframes: ["5m", "15m", "daily"]
+      alignment_method: "timestamp_based_synchronization"
+      interpolation_handling: "forward_fill_with_validation"
+      
+    data_storage_structure:
+      format: "hierarchical_timeframe_structure"
+      indexing: "datetime_symbol_composite_index"
+      compression: "parquet_with_snappy_compression"
+      partitioning: "by_date_and_symbol"
+      
+    quality_assurance:
+      missing_data_detection: "gap_analysis_per_timeframe"
+      outlier_detection: "statistical_boundary_analysis"
+      corporate_action_handling: "automatic_adjustment_with_logging"
+      
+  calculation_engine:
+    indicator_pipeline:
+      vwap_calculations:
+        5m_vwap: "real_time_cumulative_calculation"
+        15m_vwap: "aggregated_from_5m_or_independent"
+        session_reset: "daily_09_30_ET_reset"
+        
+      deviation_bands:
+        atr_calculation: "true_range_exponential_smoothing"
+        band_calculation: "vwap_plus_minus_atr_multiple"
+        adaptive_multipliers: "volatility_regime_based_adjustment"
+        
+      bar_break_triggers:
+        signal_generation: "multi_condition_boolean_logic"
+        quality_scoring: "weighted_component_analysis"
+        timing_precision: "bar_close_based_triggers"
+        
+    strategy_logic_engine:
+      pattern_recognition: "backside_runner_identification_algorithm"
+      entry_signal_generation: "multi_stage_pyramid_logic"
+      exit_signal_generation: "phased_profit_taking_system"
+      risk_management: "dynamic_stop_and_sizing_calculations"
+
+backtesting_simulation_engine:
+  execution_simulation:
+    order_modeling:
+      market_orders:
+        fill_assumption: "immediate_fill_at_next_available_price"
+        slippage_modeling: "volume_weighted_slippage_estimation"
+        
+      limit_orders:
+        fill_logic: "price_improvement_aware_fill_simulation"
+        timeout_handling: "configurable_timeout_with_cancellation"
+        partial_fill_modeling: "liquidity_based_partial_execution"
+        
+    timing_precision:
+      signal_generation_delay: "end_of_bar_plus_processing_lag"
+      order_placement_delay: "configurable_latency_simulation"
+      fill_confirmation_delay: "realistic_execution_timing"
+      
+  position_tracking:
+    multi_stage_position_management:
+      stage_tracking: "individual_stage_entry_exit_tracking"
+      weighted_average_calculations: "dynamic_cost_basis_updates"
+      partial_exit_handling: "fifo_lifo_configurable_exit_methods"
+      
+    pnl_calculations:
+      unrealized_pnl: "mark_to_market_per_bar"
+      realized_pnl: "trade_by_trade_calculation"
+      transaction_cost_integration: "deducted_from_realized_pnl"
+      
+  risk_simulation:
+    stop_loss_execution:
+      trigger_detection: "intrabar_price_monitoring"
+      slippage_on_stops: "adverse_slippage_modeling"
+      gap_risk_handling: "overnight_gap_risk_simulation"
+      
+    position_sizing_validation:
+      account_balance_tracking: "dynamic_balance_updates"
+      leverage_monitoring: "real_time_leverage_calculation"
+      risk_limit_enforcement: "hard_and_soft_limit_simulation"
+
+testing_methodology:
+  walk_forward_analysis:
+    training_periods:
+      in_sample_period: "12_months_training_data"
+      out_of_sample_period: "3_months_validation_data"
+      reoptimization_frequency: "quarterly_parameter_updates"
+      
+    parameter_optimization:
+      optimization_method: "grid_search_with_genetic_algorithm"
+      objective_function: "risk_adjusted_return_maximization"
+      constraints: "maximum_drawdown_and_correlation_limits"
+      
+  monte_carlo_simulation:
+    scenario_generation:
+      trade_sequence_randomization: "bootstrap_resampling"
+      return_distribution_modeling: "historical_return_distribution"
+      correlation_preservation: "copula_based_dependency_modeling"
+      
+    statistical_validation:
+      confidence_intervals: "95_percent_confidence_bounds"
+      tail_risk_analysis: "var_and_cvar_calculations"
+      robustness_testing: "parameter_sensitivity_analysis"
+      
+  regime_based_testing:
+    market_regime_identification:
+      volatility_regimes: "low_normal_high_vol_classification"
+      trend_regimes: "bull_bear_sideways_classification"
+      correlation_regimes: "high_low_correlation_periods"
+      
+    regime_specific_performance:
+      performance_attribution: "by_regime_performance_breakdown"
+      parameter_stability: "regime_invariant_parameter_analysis"
+      adaptation_effectiveness: "regime_transition_performance"
+
+performance_measurement:
+  return_metrics:
+    absolute_returns:
+      - "total_return"
+      - "annualized_return"
+      - "compound_annual_growth_rate"
+      
+    risk_adjusted_returns:
+      - "sharpe_ratio"
+      - "sortino_ratio"
+      - "calmar_ratio"
+      - "information_ratio"
+      
+  risk_metrics:
+    drawdown_analysis:
+      - "maximum_drawdown"
+      - "average_drawdown"
+      - "drawdown_duration"
+      - "recovery_time"
+      
+    volatility_measures:
+      - "annualized_volatility"
+      - "downside_deviation"
+      - "value_at_risk_95"
+      - "conditional_value_at_risk"
+      
+  trade_level_analytics:
+    win_rate_analysis:
+      - "overall_win_rate"
+      - "win_rate_by_stage"
+      - "win_rate_by_market_regime"
+      - "consecutive_wins_losses"
+      
+    profit_distribution:
+      - "average_win_vs_average_loss"
+      - "profit_factor"
+      - "expectancy_per_trade"
+      - "tail_ratio_analysis"
+
+data_requirements:
+  historical_data_specifications:
+    timeframe_coverage:
+      5m_bars: "minimum_2_years_history"
+      15m_bars: "minimum_2_years_history"
+      daily_bars: "minimum_5_years_context"
+      
+    data_quality_requirements:
+      completeness: "minimum_95_percent_data_availability"
+      accuracy: "corporate_action_adjusted"
+      timeliness: "end_of_day_plus_1_business_day"
+      
+    universe_specifications:
+      market_cap_range: "100M_to_10B_market_cap"
+      liquidity_requirements: "minimum_1M_average_daily_volume"
+      price_range: "5_to_100_dollar_price_range"
+      
+  benchmark_data:
+    market_benchmarks: ["SPY", "QQQ", "IWM"]
+    sector_benchmarks: "sector_specific_etfs"
+    risk_free_rate: "3_month_treasury_rate"
+
+validation_framework:
+  statistical_significance_testing:
+    hypothesis_testing:
+      null_hypothesis: "strategy_returns_equal_benchmark"
+      alternative_hypothesis: "strategy_outperforms_benchmark"
+      significance_level: "alpha_0.05"
+      
+    bootstrap_validation:
+      bootstrap_samples: "1000_iterations"
+      confidence_intervals: "bias_corrected_accelerated"
+      multiple_testing_correction: "bonferroni_adjustment"
+      
+  robustness_validation:
+    parameter_sensitivity:
+      parameter_ranges: "plus_minus_20_percent_base_values"
+      sensitivity_metrics: "performance_degradation_analysis"
+      
+    data_sensitivity:
+      sample_period_variation: "different_start_end_dates"
+      universe_variation: "different_stock_universes"
+      frequency_variation: "different_rebalancing_frequencies"
+      
+  implementation_validation:
+    execution_assumptions:
+      slippage_sensitivity: "varying_slippage_assumptions"
+      transaction_cost_sensitivity: "varying_cost_structures"
+      liquidity_constraints: "position_size_vs_volume_analysis"
+      
+    timing_assumptions:
+      signal_delay_sensitivity: "varying_implementation_delays"
+      fill_assumption_sensitivity: "conservative_vs_optimistic_fills"
+
+reporting_and_visualization:
+  performance_reports:
+    executive_summary:
+      - "key_performance_metrics_table"
+      - "risk_return_scatter_plot"
+      - "drawdown_analysis_chart"
+      
+    detailed_analysis:
+      - "monthly_returns_heatmap"
+      - "rolling_performance_metrics"
+      - "regime_based_performance_breakdown"
+      
+  diagnostic_reports:
+    strategy_diagnostics:
+      - "trade_distribution_analysis"
+      - "holding_period_analysis"
+      - "seasonal_performance_patterns"
+      
+    risk_diagnostics:
+      - "correlation_analysis_vs_benchmarks"
+      - "sector_exposure_over_time"
+      - "leverage_utilization_analysis"
+      
+  interactive_dashboards:
+    real_time_monitoring: "live_backtest_progress_dashboard"
+    scenario_analysis: "what_if_parameter_analysis_tool"
+    comparative_analysis: "multi_strategy_comparison_dashboard"
+
+system_architecture:
+  computational_requirements:
+    processing_power: "multi_core_parallel_processing"
+    memory_requirements: "minimum_32gb_ram_recommended"
+    storage_requirements: "ssd_storage_for_fast_data_access"
+    
+  scalability_design:
+    horizontal_scaling: "distributed_backtesting_capability"
+    vertical_scaling: "optimized_single_machine_performance"
+    cloud_integration: "aws_azure_gcp_compatibility"
+    
+  integration_points:
+    data_providers: "polygon_alpha_vantage_yahoo_finance"
+    execution_platforms: "paper_trading_integration"
+    risk_systems: "portfolio_management_system_integration"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "backtesting-engineer"
+  complexity: "very_high"
+  estimated_development_time: "2_weeks"
+  dependencies:
+    - "high_quality_historical_data"
+    - "robust_computational_infrastructure"
+    - "all_brf_strategy_components"
+  validation_priority: "critical_for_strategy_approval"

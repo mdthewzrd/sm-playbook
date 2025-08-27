@@ -1,0 +1,172 @@
+---
+strategy:
+  name: "Backside Reversion & Fade"
+  id: "brf-strategy"
+  version: "1.0.0"
+  category: "mean-reversion"
+  description: "Multi-timeframe strategy targeting short-term reversals in backside runner patterns"
+  
+concept:
+  core_thesis: "Identify and capitalize on short-term reversals in stocks exhibiting multi-day backside runner patterns"
+  market_inefficiency: "Temporary overshoots in momentum stocks create mean reversion opportunities"
+  edge_source: "Multi-timeframe VWAP deviation analysis with precise entry timing"
+
+pattern_definition:
+  backside_runner:
+    description: "Multi-day pattern where stock shows sustained momentum then begins reversal setup"
+    timeframe: "daily"
+    characteristics:
+      - "Previous uptrend with volume expansion"
+      - "Recent consolidation or pullback phase"
+      - "Price relationship to VWAP showing potential reversal signals"
+    
+  entry_setup:
+    description: "Multi-timeframe convergence indicating reversal opportunity"
+    primary_timeframe: "15m"
+    confirmation_timeframe: "5m"
+    
+entry_rules:
+  trading_hours:
+    golden_time_zone:
+      start_time: "08:30"  # 8:30 AM ET
+      end_time: "11:30"    # 11:30 AM ET
+      description: "Strategy only looks for extensions during golden time zone"
+      timezone: "US/Eastern"
+    
+  stage_1_entry:
+    condition: "Initial reversal signal"
+    time_restriction: "golden_time_zone_only"
+    triggers:
+      - "15m: Price breaks below VWAP with volume"
+      - "5m: Confirmation bar break trigger"
+      - "Deviation bands showing overextension"
+      - "Current time within golden time zone (8:30-11:30 AM ET)"
+    position_size: "33% of planned total"
+    
+  stage_2_entry:
+    condition: "Continuation confirmation"
+    time_restriction: "golden_time_zone_only"
+    triggers:
+      - "Price continues through deviation bands"
+      - "Volume profile supports move"
+      - "5m timeframe maintains bearish bias"
+      - "Current time within golden time zone (8:30-11:30 AM ET)"
+    position_size: "33% of planned total"
+    
+  stage_3_entry:
+    condition: "Maximum conviction signal"
+    time_restriction: "golden_time_zone_only"
+    triggers:
+      - "Strong momentum continuation"
+      - "Both timeframes aligned"
+      - "Risk/reward still favorable"
+      - "Current time within golden time zone (8:30-11:30 AM ET)"
+    position_size: "34% of planned total"
+
+indicators:
+  vwap:
+    timeframes: ["5m", "15m"]
+    calculation: "standard_vwap"
+    usage: "Primary trend and mean reversion reference"
+    
+  deviation_bands:
+    base_indicator: "lingua_atr_bands"
+    timeframes: ["5m", "15m"]
+    parameters:
+      atr_period: 14
+      band_multiplier: 2.0
+    usage: "Measure price extension and reversal zones"
+    
+  bar_break_trigger:
+    type: "custom_logic"
+    timeframes: ["5m", "15m"]
+    definition: "Confirmation signal for entry timing"
+    parameters:
+      lookback_bars: 3
+      volume_threshold: "above_average"
+
+risk_management:
+  position_sizing:
+    method: "fixed_percentage"
+    max_risk_per_trade: 0.02
+    max_total_position: 0.02
+    
+  stop_loss:
+    type: "dynamic_vwap_based"
+    initial_stop: "VWAP + (1.5 * ATR)"
+    trailing_method: "vwap_deviation"
+    max_loss: 0.02
+    
+  pyramiding:
+    max_adds: 3
+    add_size: "equal_weight"
+    add_conditions: "continued_momentum + favorable_risk_reward"
+
+exit_rules:
+  profit_taking:
+    method: "phased_exits"
+    stage_1: 
+      percentage: 30
+      target: "0.5 * ATR profit"
+    stage_2:
+      percentage: 50
+      target: "1.0 * ATR profit"
+    stage_3:
+      percentage: 20
+      target: "1.5 * ATR profit or trailing stop"
+      
+  stop_conditions:
+    hard_stop: "dynamic_vwap_based"
+    time_stop: "end_of_day"
+    pattern_invalidation: "return_above_entry_vwap"
+
+timeframe_coordination:
+  hierarchy:
+    primary: "15m"
+    secondary: "5m"
+    
+  entry_confirmation:
+    requirement: "both_timeframes_aligned"
+    primary_signal: "15m_vwap_break"
+    secondary_confirmation: "5m_bar_break_trigger"
+    
+  exit_coordination:
+    profit_targets: "based_on_15m_atr"
+    stop_management: "5m_precision_15m_logic"
+
+validation_requirements:
+  backtesting:
+    universe: "small_cap_stocks_with_backside_runner_history"
+    lookback_period: "2_years"
+    required_metrics:
+      win_rate: ">= 55%"
+      profit_factor: ">= 1.3"
+      max_drawdown: "<= 15%"
+      sharpe_ratio: ">= 1.2"
+      
+  stress_testing:
+    high_volatility_periods: "required"
+    transaction_cost_modeling: "realistic_slippage_commission"
+    correlation_analysis: "max_0.7_with_existing_strategies"
+
+implementation_notes:
+  complexity: "high"
+  required_infrastructure:
+    - "multi_timeframe_data_feeds"
+    - "real_time_vwap_calculation"
+    - "custom_deviation_bands"
+    - "pyramiding_order_management"
+    
+  key_challenges:
+    - "precise_entry_timing_across_timeframes"
+    - "dynamic_position_sizing_with_adds"
+    - "real_time_pattern_recognition"
+    - "slippage_management_on_multiple_entries"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  status: "formalized"
+  next_phase: "indicator_development"
+  estimated_dev_time: "2_weeks"
+  priority: "high"

@@ -1,0 +1,267 @@
+---
+profit_taking_system:
+  name: "BRF Phased Profit-Taking Engine"
+  id: "brf-profit-engine"
+  version: "1.0.0"
+  description: "Multi-stage profit-taking system optimized for BRF mean reversion strategy"
+
+profit_taking_philosophy:
+  core_strategy: "Capture profits in phases while allowing for extended moves"
+  risk_optimization: "Lock in gains progressively while maintaining upside exposure"
+  mean_reversion_focus: "Target natural reversion points based on VWAP and ATR levels"
+
+profit_target_structure:
+  target_calculation_base:
+    reference_timeframe: "15m"
+    atr_calculation: "15m_atr_14_period"
+    vwap_reference: "15m_session_vwap"
+    entry_reference: "weighted_average_of_all_stage_entries"
+    
+  stage_1_profit_target:
+    percentage_of_position: 30
+    target_description: "Quick profit capture on initial reversion"
+    
+    calculation_method:
+      base_target: "weighted_entry_price - (0.5 * 15m_atr)"
+      minimum_profit: "0.3_percent_of_entry_price"
+      maximum_profit: "1.0_percent_of_entry_price"
+      
+    dynamic_adjustments:
+      high_volatility: "expand_target_by_0.2_atr"
+      low_volatility: "contract_target_by_0.1_atr"
+      strong_momentum: "expand_target_by_0.3_atr"
+      
+    execution_parameters:
+      order_type: "limit_order"
+      order_placement: "immediately_upon_position_entry"
+      timeout: "remainder_of_trading_session"
+      
+    trigger_conditions:
+      primary: "price_reaches_calculated_target"
+      alternative: "strong_reversal_signals_before_target"
+      emergency: "stop_loss_approaching_risk"
+      
+  stage_2_profit_target:
+    percentage_of_position: 50
+    target_description: "Primary profit target at mean reversion level"
+    
+    calculation_method:
+      base_target: "weighted_entry_price - (1.0 * 15m_atr)"
+      vwap_reference_check: "target_should_approach_15m_vwap"
+      minimum_profit: "0.8_percent_of_entry_price"
+      maximum_profit: "2.5_percent_of_entry_price"
+      
+    dynamic_adjustments:
+      pattern_strength_multiplier:
+        excellent_pattern: "1.0_times_base_target"
+        good_pattern: "0.9_times_base_target" 
+        acceptable_pattern: "0.8_times_base_target"
+        
+      market_regime_adjustment:
+        trending_regime: "expand_by_0.2_atr"
+        range_bound_regime: "contract_by_0.1_atr"
+        volatile_regime: "expand_by_0.3_atr"
+        
+    execution_parameters:
+      order_type: "limit_order"
+      order_placement: "after_stage_1_entry_or_immediately"
+      partial_fill_acceptable: "minimum_25_percent_of_intended"
+      
+    activation_conditions:
+      stage_1_not_required: "can_activate_independently"
+      momentum_confirmation: "15m_trend_supporting_target"
+      time_validation: "sufficient_time_remaining_in_session"
+      
+  stage_3_profit_target:
+    percentage_of_position: 20
+    target_description: "Extended target or trailing stop system"
+    
+    dual_approach:
+      fixed_target:
+        calculation: "weighted_entry_price - (1.5 * 15m_atr)"
+        conditions: "strong_momentum_continuation_expected"
+        
+      trailing_stop:
+        activation: "after_stage_2_target_achieved"
+        reference: "5m_vwap_based_trailing_system"
+        
+    trailing_system_parameters:
+      initial_trail_distance: "1.0 * 15m_atr"
+      trail_adjustment_frequency: "per_5m_bar_close"
+      minimum_trail_distance: "0.5 * 15m_atr"
+      maximum_trail_distance: "2.0 * 15m_atr"
+      
+    profit_protection:
+      minimum_profit_lock: "1.0_percent_of_entry_price"
+      breakeven_stop: "activate_if_reversion_stalls"
+      time_decay_factor: "tighten_trail_as_session_progresses"
+
+dynamic_profit_optimization:
+  momentum_based_adjustments:
+    strong_momentum_continuation:
+      stage_1_modification: "delay_by_0.1_atr_if_momentum_strong"
+      stage_2_modification: "extend_by_0.2_atr_if_volume_supporting"
+      stage_3_modification: "activate_trailing_system_earlier"
+      
+    momentum_exhaustion_signals:
+      stage_1_modification: "tighten_to_immediate_profit_taking"
+      stage_2_modification: "reduce_target_by_0.1_atr"
+      stage_3_modification: "exit_at_market_immediately"
+      
+  volume_profile_integration:
+    high_volume_reversal:
+      interpretation: "strong_reversal_likely_extend_targets"
+      adjustment: "increase_all_targets_by_0.1_atr"
+      
+    low_volume_drift:
+      interpretation: "weak_reversal_take_profits_quickly"
+      adjustment: "reduce_all_targets_by_0.1_atr"
+      
+    volume_exhaustion:
+      interpretation: "momentum_dying_exit_positions"
+      adjustment: "convert_all_remaining_to_market_orders"
+
+vwap_integration_system:
+  vwap_proximity_adjustments:
+    approaching_15m_vwap:
+      stage_2_target: "tighten_to_just_above_vwap"
+      reasoning: "vwap_acts_as_natural_support_resistance"
+      
+    below_15m_vwap:
+      all_targets: "extended_targets_likely_achievable"
+      adjustment: "increase_confidence_in_full_targets"
+      
+    reclaim_above_vwap:
+      emergency_action: "exit_remaining_positions_immediately"
+      reasoning: "pattern_invalidation_signal"
+      
+  vwap_slope_considerations:
+    declining_vwap_slope:
+      target_adjustment: "extend_targets_trend_supporting"
+      confidence_level: "high_for_extended_moves"
+      
+    flat_vwap_slope:
+      target_adjustment: "use_standard_calculations"
+      confidence_level: "medium_follow_plan"
+      
+    rising_vwap_slope:
+      target_adjustment: "tighten_targets_trend_against_us"
+      confidence_level: "low_take_profits_quickly"
+
+execution_timing_system:
+  order_placement_timing:
+    stage_1_orders:
+      placement: "immediately_upon_entry_fill"
+      order_management: "good_till_cancelled"
+      modification_rules: "allow_tightening_only"
+      
+    stage_2_orders:
+      placement: "after_stage_1_fill_or_concurrent"
+      dependency_logic: "independent_of_stage_1_achievement"
+      
+    stage_3_orders:
+      placement: "after_stage_2_achievement_or_early_activation"
+      trailing_activation: "dynamic_based_on_conditions"
+      
+  profit_taking_sequence:
+    optimal_sequence:
+      step_1: "stage_1_target_hit_30_percent_position"
+      step_2: "re_evaluate_remaining_position_targets"
+      step_3: "stage_2_target_hit_50_percent_remaining"
+      step_4: "activate_trailing_system_final_20_percent"
+      
+    alternative_sequences:
+      fast_reversal: "take_all_profits_rapidly_if_momentum_exhausted"
+      slow_grind: "be_patient_let_targets_work"
+      invalidation: "exit_all_immediately_on_pattern_failure"
+
+risk_adjusted_profit_taking:
+  risk_reward_optimization:
+    minimum_risk_reward_ratios:
+      stage_1: "1_to_1_5_risk_reward"
+      stage_2: "1_to_2_5_risk_reward"  
+      stage_3: "1_to_3_5_risk_reward_or_trailing"
+      
+    dynamic_ratio_adjustment:
+      high_probability_setups: "accept_lower_ratios"
+      low_probability_setups: "require_higher_ratios"
+      
+  drawdown_protection:
+    unrealized_profit_protection:
+      trigger: "if_unrealized_profits_exceed_2_percent_account"
+      action: "tighten_all_profit_targets_by_0.1_atr"
+      
+    profit_giveback_limits:
+      maximum_giveback: "50_percent_of_unrealized_profits"
+      protection_mechanism: "trailing_stops_on_all_remaining"
+
+market_regime_adaptations:
+  trending_market_regime:
+    profit_target_adjustments:
+      stage_1: "extend_by_0.1_atr"
+      stage_2: "extend_by_0.2_atr"
+      stage_3: "favor_trailing_system_over_fixed_target"
+      
+  range_bound_market_regime:
+    profit_target_adjustments:
+      stage_1: "tighten_by_0.1_atr"
+      stage_2: "use_standard_calculations"
+      stage_3: "favor_fixed_targets_over_trailing"
+      
+  high_volatility_regime:
+    profit_target_adjustments:
+      all_stages: "extend_all_targets_by_0.2_atr"
+      reasoning: "larger_moves_expected_in_volatile_conditions"
+
+performance_monitoring:
+  profit_taking_effectiveness:
+    key_metrics:
+      - "percentage_of_targets_achieved"
+      - "average_profit_per_stage"
+      - "optimal_vs_actual_exit_timing"
+      - "profit_giveback_frequency"
+      
+    optimization_feedback:
+      successful_patterns: "identify_for_parameter_enhancement"
+      failed_patterns: "analyze_for_adjustment_opportunities"
+      
+  adaptive_learning:
+    parameter_adjustment_triggers:
+      - "consistent_underperformance_of_targets"
+      - "frequent_profit_givebacks"
+      - "market_regime_changes"
+      
+    learning_mechanisms:
+      - "historical_outcome_analysis"
+      - "real_time_performance_tracking"
+      - "regime_specific_optimization"
+
+integration_specifications:
+  system_dependencies:
+    - "brf_strategy_implementation"
+    - "brf_pyramiding_system"
+    - "real_time_vwap_calculations"
+    - "atr_calculation_engine"
+    
+  data_requirements:
+    - "real_time_position_tracking"
+    - "unrealized_pnl_calculations"
+    - "order_execution_quality_metrics"
+    - "market_regime_indicators"
+    
+  alert_systems:
+    - "profit_target_achievement_notifications"
+    - "trailing_stop_activation_alerts"
+    - "profit_giveback_warnings"
+    - "pattern_invalidation_emergency_exits"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  complexity: "high"
+  integration_priority: "critical"
+  estimated_implementation_time: "3_days"
+  dependencies:
+    - "advanced_order_management_system"
+    - "real_time_profit_loss_tracking"
+    - "dynamic_parameter_adjustment_engine"

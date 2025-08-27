@@ -1,0 +1,251 @@
+---
+transaction_cost_model:
+  name: "BRF Realistic Transaction Cost Engine"
+  id: "brf-transaction-cost-model"
+  version: "1.0.0"
+  description: "Comprehensive transaction cost modeling for accurate BRF strategy backtesting"
+
+cost_model_philosophy:
+  realism_objective: "Model true implementation costs to provide realistic performance expectations"
+  granularity: "Account for all cost components including hidden costs"
+  adaptability: "Adjust costs based on market conditions, volatility, and liquidity"
+
+commission_structure:
+  broker_commission_models:
+    per_share_model:
+      base_rate: "0.005_per_share"
+      minimum_commission: "1.00_per_trade"
+      maximum_commission: "1_percent_of_trade_value"
+      
+    per_trade_model:
+      fixed_commission: "4.95_per_trade"
+      applicable_conditions: "all_equity_trades"
+      
+    tiered_model:
+      tier_1: "0_to_300_shares_6.95_flat"
+      tier_2: "301_to_1000_shares_6.95_plus_0.75_per_100_shares"
+      tier_3: "1000_plus_shares_percentage_based"
+
+bid_ask_spread_modeling:
+  spread_estimation:
+    liquidity_based_spreads:
+      high_liquidity_stocks:
+        avg_daily_volume: "over_5M_shares"
+        typical_spread: "0.01_to_0.03_percent"
+        
+      medium_liquidity_stocks:
+        avg_daily_volume: "1M_to_5M_shares"
+        typical_spread: "0.03_to_0.08_percent"
+        
+      low_liquidity_stocks:
+        avg_daily_volume: "under_1M_shares"
+        typical_spread: "0.08_to_0.25_percent"
+        
+  dynamic_spread_adjustments:
+    volatility_adjustments:
+      low_volatility: "spread_multiplier_0.8"
+      normal_volatility: "spread_multiplier_1.0"
+      high_volatility: "spread_multiplier_1.5"
+      extreme_volatility: "spread_multiplier_2.5"
+      
+    time_of_day_adjustments:
+      market_open_930_1030: "spread_multiplier_1.4"
+      mid_morning_1030_1200: "spread_multiplier_1.0"
+      lunch_1200_1400: "spread_multiplier_1.1"
+      afternoon_1400_1530: "spread_multiplier_1.0"
+      market_close_1530_1600: "spread_multiplier_1.3"
+      
+    market_impact_adjustments:
+      news_events: "spread_multiplier_1.5_to_3.0"
+      earnings_announcements: "spread_multiplier_2.0_to_4.0"
+      sector_rotation: "spread_multiplier_1.2_to_2.0"
+
+market_impact_modeling:
+  temporary_impact:
+    linear_impact_model:
+      formula: "temporary_impact = alpha * (order_size / adv)^beta"
+      alpha: "0.5_basis_points"
+      beta: "0.6_power_factor"
+      
+    participation_rate_impact:
+      low_participation: "under_5_percent_adv_minimal_impact"
+      medium_participation: "5_to_15_percent_adv_moderate_impact"
+      high_participation: "over_15_percent_adv_significant_impact"
+      
+  permanent_impact:
+    information_leakage:
+      small_orders: "minimal_permanent_impact_0_to_2_bps"
+      medium_orders: "moderate_permanent_impact_2_to_8_bps" 
+      large_orders: "significant_permanent_impact_8_to_25_bps"
+      
+    recovery_modeling:
+      recovery_half_life: "15_to_45_minutes_typical"
+      full_recovery_time: "2_to_6_hours_depending_on_liquidity"
+
+slippage_modeling:
+  execution_slippage:
+    market_order_slippage:
+      calculation_method: "half_of_bid_ask_spread_plus_impact"
+      minimum_slippage: "0.01_percent"
+      maximum_slippage: "0.5_percent"
+      
+    limit_order_slippage:
+      favorable_slippage: "negative_slippage_possible"
+      adverse_slippage: "if_price_moves_before_fill"
+      timeout_cost: "opportunity_cost_of_unfilled_orders"
+      
+  multi_stage_slippage:
+    stage_1_entries:
+      order_type: "limit_orders"
+      expected_slippage: "0_to_negative_0.02_percent"
+      
+    stage_2_entries:
+      order_type: "market_orders"
+      expected_slippage: "0.05_to_0.15_percent"
+      
+    stage_3_entries:
+      order_type: "market_orders"
+      expected_slippage: "0.08_to_0.20_percent"
+      
+    exit_orders:
+      profit_targets: "limit_orders_minimal_slippage"
+      stop_losses: "market_orders_0.10_to_0.30_percent"
+
+liquidity_constraints:
+  volume_participation_limits:
+    maximum_participation:
+      normal_conditions: "15_percent_of_5min_volume"
+      volatile_conditions: "10_percent_of_5min_volume"
+      low_liquidity_conditions: "5_percent_of_5min_volume"
+      
+  position_sizing_constraints:
+    adv_based_limits:
+      maximum_position: "2_percent_of_20_day_adv"
+      practical_limit: "position_fillable_within_5_minutes"
+      
+    float_based_limits:
+      maximum_position: "0.1_percent_of_float"
+      concentration_limit: "avoid_excessive_ownership"
+
+borrowing_costs:
+  short_selling_costs:
+    borrow_rates:
+      easy_to_borrow: "0.1_to_1.0_percent_annually"
+      hard_to_borrow: "1.0_to_10.0_percent_annually"
+      special_situations: "10_plus_percent_annually"
+      
+    availability_constraints:
+      shares_available: "check_borrow_availability"
+      recall_risk: "model_forced_buy_in_scenarios"
+
+regulatory_and_tax_costs:
+  sec_fees:
+    rate: "22.10_per_million_dollars_sold"
+    application: "sell_transactions_only"
+    
+  finra_fees:
+    taf_fees: "0.000145_per_share_max_7.27_per_trade"
+    application: "all_equity_transactions"
+    
+  state_taxes:
+    varies_by_jurisdiction: "model_based_on_entity_location"
+
+opportunity_costs:
+  timing_delays:
+    signal_to_order_delay: "30_seconds_average_delay"
+    order_to_fill_delay: "varies_by_order_type_and_conditions"
+    
+  unfilled_orders:
+    limit_order_timeout_cost: "missed_opportunity_quantification"
+    partial_fill_cost: "suboptimal_position_sizing_impact"
+
+cost_aggregation_methodology:
+  total_cost_calculation:
+    round_trip_costs:
+      entry_costs: "commission + spread/2 + slippage + impact"
+      exit_costs: "commission + spread/2 + slippage + impact"
+      holding_costs: "borrow_fees + opportunity_costs"
+      
+  cost_attribution:
+    by_trade_component:
+      - "commission_costs"
+      - "spread_costs"
+      - "slippage_costs"
+      - "market_impact_costs"
+      - "opportunity_costs"
+      
+    by_strategy_component:
+      - "stage_1_entry_costs"
+      - "stage_2_entry_costs"
+      - "stage_3_entry_costs"
+      - "profit_target_exit_costs"
+      - "stop_loss_exit_costs"
+
+dynamic_cost_adjustments:
+  market_condition_modifiers:
+    bull_market_conditions:
+      spread_adjustment: "multiply_by_0.9"
+      impact_adjustment: "multiply_by_0.8"
+      
+    bear_market_conditions:
+      spread_adjustment: "multiply_by_1.2"
+      impact_adjustment: "multiply_by_1.4"
+      
+    high_correlation_periods:
+      impact_adjustment: "multiply_by_1.3"
+      slippage_adjustment: "multiply_by_1.2"
+      
+  strategy_specific_adjustments:
+    pyramiding_penalty:
+      multiple_entries: "increased_market_impact_per_stage"
+      timing_concentration: "higher_costs_for_rapid_entries"
+      
+    mean_reversion_discount:
+      contrarian_nature: "potentially_favorable_execution"
+      liquidity_provision: "reduced_impact_in_some_conditions"
+
+cost_validation_framework:
+  historical_validation:
+    real_execution_comparison:
+      method: "compare_model_vs_actual_execution_data"
+      tolerance: "within_20_percent_of_actual_costs"
+      
+    peer_strategy_comparison:
+      benchmark: "industry_standard_cost_assumptions"
+      validation: "ensure_costs_within_reasonable_range"
+      
+  sensitivity_analysis:
+    cost_parameter_sensitivity:
+      spread_sensitivity: "vary_spreads_plus_minus_50_percent"
+      impact_sensitivity: "vary_impact_plus_minus_30_percent"
+      commission_sensitivity: "test_different_broker_models"
+      
+    performance_impact:
+      cost_impact_on_returns: "quantify_return_reduction_from_costs"
+      breakeven_analysis: "minimum_performance_needed_after_costs"
+
+implementation_specifications:
+  real_time_cost_calculation:
+    cost_engine_integration: "real_time_cost_estimation_per_trade"
+    pre_trade_cost_analysis: "expected_cost_calculation_before_execution"
+    post_trade_cost_attribution: "actual_cost_breakdown_after_execution"
+    
+  cost_reporting:
+    trade_level_reporting: "detailed_cost_breakdown_per_trade"
+    strategy_level_reporting: "aggregate_cost_analysis"
+    performance_attribution: "return_attribution_after_all_costs"
+    
+  optimization_integration:
+    cost_aware_optimization: "include_costs_in_parameter_optimization"
+    cost_benefit_analysis: "trade_profitability_after_all_costs"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "backtesting-engineer"
+  complexity: "high"
+  validation_requirements:
+    - "historical_cost_data_validation"
+    - "sensitivity_analysis_completion"
+    - "peer_comparison_validation"
+  estimated_implementation_time: "4_days"
+  critical_for: "accurate_strategy_performance_assessment"

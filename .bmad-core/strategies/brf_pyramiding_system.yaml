@@ -1,0 +1,271 @@
+---
+pyramiding_system:
+  name: "BRF Multi-Stage Pyramiding Engine"
+  id: "brf-pyramiding-engine" 
+  version: "1.0.0"
+  description: "Advanced pyramiding system for phased position building in BRF strategy"
+
+pyramiding_philosophy:
+  core_concept: "Build positions progressively as conviction increases and setup matures"
+  risk_management: "Equal risk allocation across stages with dynamic stop adjustment"
+  signal_hierarchy: "Higher stages require stronger conviction and confirmation"
+
+stage_definitions:
+  stage_1_initial_entry:
+    position_allocation: 33  # percent of total planned position
+    risk_allocation: 33     # percent of total planned risk
+    conviction_level: "initial_setup_confirmation"
+    
+    trigger_requirements:
+      primary_signals:
+        - "15m_vwap_break_with_volume"
+        - "deviation_bands_stage_1_overextension" 
+        - "5m_bar_break_trigger_quality_score_70_plus"
+        
+      confirmation_requirements:
+        - "pattern_maturation_score_above_70"
+        - "volume_surge_exceeds_threshold"
+        - "no_immediate_invalidation_signals"
+        
+    execution_parameters:
+      order_type: "limit_order_at_bid"
+      fill_timeout: "5_minutes"
+      partial_fill_handling: "accept_minimum_50_percent"
+      
+    risk_parameters:
+      initial_stop_distance: "15m_vwap + (1.5 * 15m_atr)"
+      maximum_risk_per_stage: "0.67_percent_account"
+      position_size_calculation: "risk_amount / stop_distance"
+      
+  stage_2_confirmation_add:
+    position_allocation: 33  # percent of total planned position
+    risk_allocation: 33     # percent of total planned risk
+    conviction_level: "momentum_continuation_confirmed"
+    dependency: "stage_1_filled_successfully"
+    
+    trigger_requirements:
+      momentum_signals:
+        - "price_progression_through_deviation_bands"
+        - "15m_pattern_integrity_maintained"
+        - "5m_follow_through_confirmed"
+        
+      volume_confirmation:
+        - "cumulative_volume_above_expected"
+        - "selling_pressure_visible_in_order_flow"
+        - "no_volume_exhaustion_signals"
+        
+      timing_requirements:
+        - "minimum_2_minutes_after_stage_1"
+        - "maximum_15_minutes_after_stage_1"
+        - "within_market_hours_trading_window"
+        
+    execution_parameters:
+      order_type: "market_order"
+      execution_timing: "immediate_on_trigger"
+      slippage_tolerance: "0.1_percent"
+      
+    risk_parameters:
+      stop_reference: "stage_1_stop_or_better"
+      dynamic_stop_adjustment: "tighten_based_on_momentum"
+      correlation_check: "ensure_not_correlated_with_existing"
+      
+  stage_3_maximum_conviction:
+    position_allocation: 34  # percent of total planned position (remainder)
+    risk_allocation: 34     # percent of total planned risk (remainder)
+    conviction_level: "extreme_overextension_maximum_opportunity"
+    dependency: "stage_2_filled_successfully"
+    
+    trigger_requirements:
+      extreme_signals:
+        - "deviation_bands_extreme_overextension_3_atr_plus"
+        - "both_timeframes_showing_accelerating_momentum"
+        - "pattern_fully_developed_highest_probability"
+        
+      market_context:
+        - "broader_market_not_counter_trending"
+        - "sector_conditions_supportive"
+        - "no_major_news_events_pending"
+        
+      final_confirmations:
+        - "bar_break_trigger_quality_score_85_plus"
+        - "volume_characteristics_exceptional"
+        - "risk_reward_ratio_still_favorable"
+        
+    execution_parameters:
+      order_type: "market_order"
+      execution_timing: "immediate_on_conviction_signal"
+      maximum_slippage: "0.15_percent"
+      
+    risk_parameters:
+      stop_management: "trailing_system_activation"
+      profit_target_adjustment: "extend_targets_for_stage_3"
+      maximum_position_hold_time: "remainder_of_trading_session"
+
+position_scaling_logic:
+  size_calculation_engine:
+    base_calculation:
+      total_account_risk: "2_percent"
+      stage_risk_allocation: "total_risk / 3_stages"
+      
+    dynamic_adjustments:
+      pattern_quality_modifier:
+        excellent_setup: "multiply_by_1.0"
+        good_setup: "multiply_by_0.85"
+        acceptable_setup: "multiply_by_0.7"
+        
+      market_volatility_modifier:
+        low_volatility: "multiply_by_1.1"
+        normal_volatility: "multiply_by_1.0"
+        high_volatility: "multiply_by_0.8"
+        
+      time_of_day_modifier:
+        market_open_hour: "multiply_by_0.8"  # higher volatility
+        mid_session: "multiply_by_1.0"
+        closing_hour: "multiply_by_0.9"
+        
+    position_correlation_limits:
+      same_sector_exposure: "maximum_15_percent_account"
+      similar_pattern_positions: "maximum_3_concurrent"
+      total_strategy_exposure: "maximum_10_percent_account"
+
+risk_coordination_system:
+  cross_stage_risk_management:
+    stop_loss_coordination:
+      initial_approach: "independent_stops_per_stage"
+      consolidation_trigger: "after_stage_2_entry"
+      unified_stop_calculation: "weighted_average_of_entry_prices"
+      
+    dynamic_stop_adjustment:
+      tightening_conditions:
+        - "profit_targets_being_reached"
+        - "momentum_showing_exhaustion_signs"
+        - "volume_declining_significantly"
+        
+      stop_trail_mechanism:
+        reference_line: "5m_vwap_with_15m_trend_bias"
+        trail_distance: "1.0_to_1.5_atr_based_on_momentum"
+        minimum_profit_lock: "0.5_percent_per_stage"
+        
+  position_invalidation_handling:
+    partial_invalidation:
+      weak_signals: "reduce_stage_3_size_or_skip"
+      moderate_signals: "exit_most_recent_stage_only"
+      
+    full_invalidation:
+      strong_reversal_signals: "exit_all_stages_immediately"
+      pattern_breakdown: "market_order_exit_all_positions"
+      stop_loss_triggered: "systematic_exit_sequence"
+      
+  correlation_management:
+    inter_stage_correlation:
+      calculation: "price_movement_correlation_between_entries"
+      acceptable_threshold: "below_0.8_correlation"
+      adjustment_mechanism: "reduce_later_stage_sizes_if_high_correlation"
+      
+    portfolio_correlation:
+      existing_position_check: "before_each_stage_entry"
+      maximum_correlated_exposure: "5_percent_account_value"
+      sector_concentration_limits: "no_more_than_20_percent_sector"
+
+execution_timing_system:
+  stage_entry_timing:
+    stage_1_timing:
+      signal_to_order_latency: "within_30_seconds"
+      order_to_fill_timeout: "5_minutes_maximum"
+      partial_fill_minimum: "50_percent_of_intended_size"
+      
+    stage_2_timing:
+      dependency_check_frequency: "every_5m_bar_close"
+      signal_validation_window: "15_minutes_maximum"
+      execution_delay_after_signal: "immediate_to_2_minutes"
+      
+    stage_3_timing:
+      conviction_signal_monitoring: "continuous_real_time"
+      maximum_opportunity_window: "10_minutes_after_stage_2"
+      execution_immediacy: "within_60_seconds_of_signal"
+      
+  inter_stage_coordination:
+    minimum_gaps:
+      stage_1_to_stage_2: "2_minutes_minimum"
+      stage_2_to_stage_3: "1_minute_minimum"
+      
+    maximum_gaps:
+      stage_1_to_stage_2: "15_minutes_maximum"
+      stage_2_to_stage_3: "10_minutes_maximum"
+      total_pyramid_build_time: "25_minutes_maximum"
+      
+    gap_violations:
+      minimum_violated: "delay_next_stage_entry"
+      maximum_violated: "abort_remaining_stages"
+
+performance_optimization:
+  fill_quality_monitoring:
+    slippage_tracking:
+      acceptable_slippage: "stage_1_0.05_percent_stages_2_3_0.1_percent"
+      slippage_adjustment: "modify_future_order_types_if_excessive"
+      
+    fill_rate_optimization:
+      target_fill_rates: "stage_1_95_percent_stages_2_3_98_percent"
+      order_type_adjustment: "based_on_historical_fill_performance"
+      
+  adaptive_parameters:
+    success_rate_feedback:
+      high_success_stages: "increase_position_sizes_slightly"
+      low_success_stages: "decrease_position_sizes_or_skip"
+      
+    market_regime_adaptation:
+      trending_markets: "increase_stage_3_frequency"
+      choppy_markets: "reduce_to_stage_1_and_2_only"
+      volatile_markets: "reduce_all_stage_sizes"
+
+monitoring_and_alerts:
+  real_time_monitoring:
+    stage_progression_tracking:
+      - "time_between_stages"
+      - "fill_quality_per_stage" 
+      - "risk_accumulation_monitoring"
+      
+    correlation_monitoring:
+      - "cross_stage_price_correlation"
+      - "portfolio_exposure_tracking"
+      - "sector_concentration_alerts"
+      
+  alert_system:
+    critical_alerts:
+      - "invalidation_signal_detected"
+      - "correlation_limits_exceeded"
+      - "stop_loss_triggered_any_stage"
+      
+    warning_alerts:
+      - "timing_gaps_approaching_limits"
+      - "slippage_exceeding_expectations"
+      - "volume_characteristics_changing"
+
+system_integration:
+  data_requirements:
+    - "real_time_order_book_data"
+    - "execution_quality_metrics"
+    - "position_tracking_system"
+    - "risk_calculation_engine"
+    
+  external_dependencies:
+    - "broker_execution_interface"
+    - "risk_management_system"
+    - "performance_attribution_system"
+    - "compliance_monitoring_system"
+    
+  backup_systems:
+    - "manual_override_capabilities"
+    - "emergency_position_exit_system"
+    - "fallback_execution_methods"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  complexity: "very_high"
+  critical_dependencies:
+    - "brf_strategy_implementation"
+    - "real_time_execution_engine"
+    - "advanced_risk_management"
+  estimated_implementation_time: "4_days"
+  testing_priority: "critical_system_component"

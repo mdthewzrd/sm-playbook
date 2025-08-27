@@ -1,0 +1,253 @@
+---
+indicator:
+  name: "Lingua ATR Deviation Bands"
+  id: "lingua-atr-deviation-bands"
+  version: "1.0.0"
+  category: "volatility-bands"
+  description: "Customized Lingua ATR bands functioning as VWAP deviation bands for BRF strategy"
+  base_indicator: "lingua_atr_bands"
+
+customization:
+  purpose: "Measure price extension and mean reversion zones relative to VWAP"
+  reference_line: "vwap"  # Instead of moving average
+  band_calculation: "atr_multiple"
+  strategy_application: "backside_reversion_and_fade"
+
+parameters:
+  atr_calculation:
+    period: 14
+    method: "exponential_smoothing"
+    true_range_components:
+      - "high_minus_low"
+      - "high_minus_previous_close"
+      - "low_minus_previous_close"
+    
+  band_configuration:
+    upper_band:
+      calculation: "vwap + (atr_multiplier * atr)"
+      default_multiplier: 2.0
+      adaptive_multiplier: true
+      
+    lower_band:
+      calculation: "vwap - (atr_multiplier * atr)"
+      default_multiplier: 2.0
+      adaptive_multiplier: true
+      
+  adaptive_parameters:
+    volatility_adjustment:
+      enabled: true
+      method: "regime_based_multiplier"
+      low_vol_multiplier: 1.5
+      normal_vol_multiplier: 2.0
+      high_vol_multiplier: 2.5
+      
+    volume_adjustment:
+      enabled: true
+      high_volume_expansion: 1.2
+      low_volume_contraction: 0.8
+      volume_threshold: "20_period_average"
+
+timeframe_implementation:
+  tf_5m:
+    atr_period: 14
+    vwap_reference: "session_vwap_5m"
+    multiplier_base: 2.0
+    update_frequency: "per_bar_close"
+    
+  tf_15m:
+    atr_period: 14
+    vwap_reference: "session_vwap_15m" 
+    multiplier_base: 2.0
+    update_frequency: "per_bar_close"
+
+signal_generation:
+  overextension_signals:
+    upper_band_breach:
+      condition: "price_closes_above_upper_band"
+      confirmation: "volume_above_average"
+      reversal_probability: "high"
+      signal_type: "fade_signal"
+      
+    lower_band_breach:
+      condition: "price_closes_below_lower_band"
+      confirmation: "volume_above_average"  
+      reversal_probability: "high"
+      signal_type: "bounce_signal"
+      
+  mean_reversion_zones:
+    extreme_overextension:
+      upper_threshold: "vwap + (3.0 * atr)"
+      lower_threshold: "vwap - (3.0 * atr)"
+      signal_strength: "maximum"
+      
+    moderate_overextension:
+      upper_threshold: "vwap + (2.0 * atr)"
+      lower_threshold: "vwap - (2.0 * atr)"
+      signal_strength: "medium"
+      
+    minor_overextension:
+      upper_threshold: "vwap + (1.0 * atr)"
+      lower_threshold: "vwap - (1.0 * atr)"
+      signal_strength: "low"
+
+brf_strategy_integration:
+  entry_trigger_zones:
+    stage_1_zone:
+      definition: "price_between_2.0_and_2.5_atr_above_vwap"
+      signal_quality: "initial_setup"
+      expected_behavior: "first_signs_of_exhaustion"
+      
+    stage_2_zone:
+      definition: "price_between_2.5_and_3.0_atr_above_vwap"
+      signal_quality: "strong_setup"
+      expected_behavior: "clear_overextension"
+      
+    stage_3_zone:
+      definition: "price_above_3.0_atr_from_vwap"
+      signal_quality: "extreme_setup"
+      expected_behavior: "maximum_overextension"
+      
+  exit_reference_zones:
+    profit_target_1:
+      reference: "return_to_1.5_atr_above_vwap"
+      percentage_of_move: "30%"
+      
+    profit_target_2:
+      reference: "return_to_1.0_atr_above_vwap"
+      percentage_of_move: "50%"
+      
+    profit_target_3:
+      reference: "return_to_vwap_or_below"
+      percentage_of_move: "20%"
+
+dynamic_adjustments:
+  market_regime_adaptation:
+    trending_market:
+      multiplier_adjustment: "+0.3"
+      reasoning: "trends_can_extend_further"
+      
+    range_bound_market:
+      multiplier_adjustment: "-0.2"
+      reasoning: "reversions_happen_sooner"
+      
+    high_volatility_market:
+      multiplier_adjustment: "+0.5"
+      reasoning: "need_wider_bands_for_noise"
+      
+  intraday_adjustments:
+    market_open:
+      time_window: "09:30-10:30"
+      multiplier_adjustment: "+0.4"
+      reasoning: "opening_volatility_expansion"
+      
+    lunch_period:
+      time_window: "12:00-14:00"
+      multiplier_adjustment: "-0.3"
+      reasoning: "reduced_volatility_period"
+      
+    market_close:
+      time_window: "15:30-16:00"
+      multiplier_adjustment: "+0.2"
+      reasoning: "closing_activity_increase"
+
+output_specifications:
+  primary_outputs:
+    upper_band_5m:
+      description: "5-minute upper deviation band"
+      calculation: "vwap_5m + (adjusted_multiplier * atr_5m)"
+      
+    lower_band_5m:
+      description: "5-minute lower deviation band"
+      calculation: "vwap_5m - (adjusted_multiplier * atr_5m)"
+      
+    upper_band_15m:
+      description: "15-minute upper deviation band"
+      calculation: "vwap_15m + (adjusted_multiplier * atr_15m)"
+      
+    lower_band_15m:
+      description: "15-minute lower deviation band"
+      calculation: "vwap_15m - (adjusted_multiplier * atr_15m)"
+      
+  derived_outputs:
+    band_width_5m:
+      description: "Width of 5m bands as percentage of VWAP"
+      calculation: "(upper_band_5m - lower_band_5m) / vwap_5m * 100"
+      
+    band_width_15m:
+      description: "Width of 15m bands as percentage of VWAP"
+      calculation: "(upper_band_15m - lower_band_15m) / vwap_15m * 100"
+      
+    price_position_5m:
+      description: "Price position within 5m bands (0-100)"
+      calculation: "(price - lower_band_5m) / (upper_band_5m - lower_band_5m) * 100"
+      
+    price_position_15m:
+      description: "Price position within 15m bands (0-100)"
+      calculation: "(price - lower_band_15m) / (upper_band_15m - lower_band_15m) * 100"
+
+validation_metrics:
+  effectiveness_measures:
+    reversal_accuracy:
+      metric: "percentage_of_band_touches_that_reverse"
+      target: "> 60%"
+      
+    false_signal_rate:
+      metric: "percentage_of_false_breakouts"
+      target: "< 25%"
+      
+    signal_timing:
+      metric: "average_bars_from_signal_to_reversal"
+      target: "< 5_bars"
+      
+  optimization_criteria:
+    parameter_sensitivity:
+      atr_period: "test_10_14_20_periods"
+      multiplier: "test_1.5_2.0_2.5_3.0"
+      
+    market_condition_performance:
+      trending_markets: "measure_effectiveness"
+      range_bound_markets: "measure_effectiveness"
+      volatile_markets: "measure_effectiveness"
+
+implementation_requirements:
+  data_dependencies:
+    - "real_time_ohlcv_data"
+    - "session_based_vwap_calculations"
+    - "atr_calculation_engine"
+    - "volume_analysis_tools"
+    
+  computational_requirements:
+    - "adaptive_parameter_adjustment"
+    - "multi_timeframe_synchronization"
+    - "real_time_signal_generation"
+    - "market_regime_detection"
+    
+  integration_points:
+    - "vwap_multi_timeframe_indicator"
+    - "bar_break_trigger_system"
+    - "brf_strategy_execution_engine"
+    - "risk_management_system"
+
+testing_framework:
+  backtesting_requirements:
+    - "historical_band_effectiveness"
+    - "parameter_optimization_results"
+    - "market_regime_performance"
+    - "false_signal_analysis"
+    
+  real_time_validation:
+    - "live_signal_accuracy"
+    - "computational_performance"
+    - "data_synchronization_integrity"
+    - "adaptive_adjustment_effectiveness"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "indicator-developer"
+  complexity: "high"
+  dependencies:
+    - "vwap_multi_timeframe"
+    - "atr_calculation_engine"
+    - "market_regime_detector"
+  estimated_implementation_time: "4_days"
+  validation_priority: "critical"

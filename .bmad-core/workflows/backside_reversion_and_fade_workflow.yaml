@@ -1,0 +1,270 @@
+---
+workflow:
+  name: "Backside Reversion & Fade Strategy Development"
+  id: "brf-strategy-development"
+  version: "1.0.0"
+  description: "Complete workflow for developing the Backside Reversion & Fade (BRF) trading strategy"
+  type: "strategy-development"
+  status: "completed"
+
+strategy:
+  name: "Backside Reversion & Fade"
+  acronym: "BRF"
+  category: "mean-reversion"
+  timeframes: ["5m", "15m", "daily"]
+  target_market: "small-cap-stocks"
+  pattern_type: "backside-runner-reversal"
+
+orchestrator: "trading-orchestrator"
+
+agents:
+  primary:
+    - id: "strategy-designer"
+      role: "Strategy formalization and rule definition"
+      status: "ready"
+      dependencies: []
+    
+    - id: "indicator-developer"
+      role: "VWAP and Lingua ATR Bands implementation"
+      status: "ready"
+      dependencies: ["strategy-designer"]
+    
+    - id: "backtesting-engineer"
+      role: "Multi-timeframe validation and testing"
+      status: "ready"
+      dependencies: ["strategy-designer", "indicator-developer"]
+    
+    - id: "execution-engineer"
+      role: "Order management and pyramiding logic"
+      status: "ready"
+      dependencies: ["strategy-designer", "backtesting-engineer"]
+
+workflow_phases:
+  phase_1:
+    name: "Strategy Conceptualization"
+    status: "completed"
+    lead_agent: "strategy-designer"
+    completed_date: "2025-08-27"
+    deliverables:
+      - "brf_strategy.yaml"
+      - "backside_runner_pattern.yaml" 
+      - "brf_trading_rules.yaml"
+      - "brf_timeframe_coordination.yaml"
+    tasks:
+      - id: "analyze-brf-concept"
+        description: "Analyze the Backside Reversion & Fade concept document"
+        status: "completed"
+        priority: "high"
+      
+      - id: "formalize-pattern-rules"
+        description: "Define backside runner pattern identification rules"
+        status: "completed"
+        priority: "high"
+      
+      - id: "create-entry-exit-rules"
+        description: "Formalize multi-stage entry, pyramiding, and exit rules"
+        status: "completed"
+        priority: "high"
+      
+      - id: "specify-timeframe-coordination"
+        description: "Define how 5m and 15m timeframes coordinate"
+        status: "completed"
+        priority: "medium"
+
+  phase_2:
+    name: "Indicator Development"
+    status: "completed"
+    lead_agent: "indicator-developer"
+    completed_date: "2025-08-27"
+    dependencies: ["phase_1"]
+    deliverables:
+      - "vwap_multi_timeframe.yaml"
+      - "lingua_atr_deviation_bands.yaml"
+      - "bar_break_trigger.yaml"
+      - "validation_framework.yaml"
+    tasks:
+      - id: "implement-vwap-logic"
+        description: "Implement VWAP calculation for 5m and 15m timeframes"
+        status: "completed"
+        priority: "high"
+      
+      - id: "customize-atr-bands"
+        description: "Customize Lingua ATR Bands as deviation bands"
+        status: "completed"
+        priority: "high"
+      
+      - id: "create-bar-break-triggers"
+        description: "Implement custom bar break trigger logic"
+        status: "completed"
+        priority: "medium"
+      
+      - id: "validate-indicator-accuracy"
+        description: "Test indicators against historical data"
+        status: "completed"
+        priority: "medium"
+
+  phase_3:
+    name: "Strategy Implementation"
+    status: "completed"
+    lead_agent: "strategy-designer"
+    completed_date: "2025-08-27"
+    dependencies: ["phase_2"]
+    deliverables:
+      - "brf_strategy_implementation.yaml"
+      - "brf_pyramiding_system.yaml"
+      - "brf_profit_taking_system.yaml"
+      - "brf_risk_management_system.yaml"
+    tasks:
+      - id: "integrate-indicators"
+        description: "Integrate VWAP and deviation bands into strategy logic"
+        status: "completed"
+        priority: "high"
+      
+      - id: "implement-pyramiding-logic"
+        description: "Code the phased position adding system"
+        status: "completed"
+        priority: "high"
+      
+      - id: "create-profit-taking-system"
+        description: "Implement the phased profit-taking plan"
+        status: "completed"
+        priority: "high"
+      
+      - id: "add-risk-management"
+        description: "Integrate stop-loss and position sizing rules"
+        status: "completed"
+        priority: "medium"
+
+  phase_4:
+    name: "Backtesting & Validation"
+    status: "completed"
+    lead_agent: "backtesting-engineer"
+    completed_date: "2025-08-27"
+    dependencies: ["phase_3"]
+    deliverables:
+      - "brf_multitimeframe_testing_framework.yaml"
+      - "brf_transaction_cost_model.yaml"
+      - "brf_backside_runner_universe.yaml"
+      - "brf_stress_testing_framework.yaml"
+      - "brf_parameter_optimization_engine.yaml"
+    tasks:
+      - id: "setup-multitimeframe-testing"
+        description: "Configure backtesting for multi-timeframe analysis"
+        status: "completed"
+        priority: "high"
+      
+      - id: "model-transaction-costs"
+        description: "Implement realistic transaction cost modeling"
+        status: "completed"
+        priority: "high"
+      
+      - id: "test-backside-runner-universe"
+        description: "Test against stocks with backside runner patterns"
+        status: "completed"
+        priority: "high"
+      
+      - id: "stress-test-volatility"
+        description: "Test strategy performance in high volatility periods"
+        status: "completed"
+        priority: "medium"
+      
+      - id: "optimize-parameters"
+        description: "Optimize strategy parameters based on backtest results"
+        status: "completed"
+        priority: "medium"
+
+  phase_5:
+    name: "Execution System"
+    status: "completed"
+    lead_agent: "execution-engineer"
+    completed_date: "2025-08-27"
+    dependencies: ["phase_4"]
+    deliverables:
+      - "order_manager.py"
+      - "risk_controls.py"
+      - "position_tracker.py"
+      - "paper_trading.py"
+      - "brf_execution_system.py"
+    tasks:
+      - id: "implement-order-management"
+        description: "Create order management system for pyramiding"
+        status: "completed"
+        priority: "high"
+      
+      - id: "setup-risk-controls"
+        description: "Implement real-time risk monitoring"
+        status: "completed"
+        priority: "high"
+      
+      - id: "create-position-tracker"
+        description: "Build position tracking for phased entries/exits"
+        status: "completed"
+        priority: "medium"
+      
+      - id: "test-paper-trading"
+        description: "Validate execution system with paper trading"
+        status: "completed"
+        priority: "medium"
+
+strategy_requirements:
+  patterns:
+    primary: "backside-runner"
+    description: "Multi-day pattern with specific VWAP relationship"
+    
+  indicators:
+    required:
+      - name: "VWAP"
+        timeframes: ["5m", "15m"]
+        parameters: ["standard"]
+      
+      - name: "Lingua ATR Bands"
+        timeframes: ["5m", "15m"]  
+        parameters: ["custom_deviation_config"]
+        alias: "deviation_bands"
+      
+      - name: "Bar Break Trigger"
+        timeframes: ["5m", "15m"]
+        parameters: ["custom_logic"]
+    
+  timeframe_coordination:
+    primary: "15m"
+    secondary: "5m"
+    entry_confirmation: "both"
+    
+  risk_parameters:
+    max_position_size: "2%"
+    stop_loss: "dynamic_vwap_based"
+    position_adds: "max_3_pyramids"
+    profit_taking: "phased_30_50_20"
+
+validation_criteria:
+  backtesting:
+    min_win_rate: 0.55
+    min_profit_factor: 1.3
+    max_drawdown: 0.15
+    min_sharpe_ratio: 1.2
+    
+  risk_metrics:
+    max_single_loss: 0.02
+    max_daily_loss: 0.04
+    correlation_limit: 0.7
+    
+  execution:
+    max_slippage: 0.001
+    fill_rate_min: 0.95
+    latency_max: "100ms"
+
+deliverables:
+  strategy_specification: ".bmad-core/strategies/brf_strategy.yaml"
+  indicator_configs: ".bmad-core/indicators/"
+  backtesting_results: "reports/brf_backtest_results.json"
+  execution_config: ".bmad-core/execution/brf_execution.yaml"
+  documentation: "docs/strategies/brf_strategy_guide.md"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "bmad-orchestrator"
+  last_updated: "2025-08-27"
+  priority: "high"
+  estimated_completion: "2025-09-10"
+  stakeholders: ["trading-team", "risk-management"]

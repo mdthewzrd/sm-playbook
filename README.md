@@ -278,10 +278,11 @@ python bmad_interface.py
 - **`qa`** - Quality assurance and testing
 
 ### Specialized Trading Agents
-- **`trading-orchestrator`** - Trading system coordination
-- **`strategy-designer`** - Trading strategy development
-- **`indicator-developer`** - Custom technical indicators
-- **`backtesting-engineer`** - Strategy validation and testing
+- **`trading-orchestrator`** - Trading system coordination using Lingua methodology
+- **`strategy-designer`** - Builds systematic strategies from Lingua concepts
+- **`indicator-developer`** - Creates custom indicators based on discretionary patterns
+- **`backtesting-engineer`** - Validates strategies with historical data using backtesting.py
+- **`scanner-developer`** - Builds stock screening systems (like OS D1)
 
 ### Agent Usage Examples
 ```bash
@@ -332,23 +333,21 @@ BMad> *status  # Shows current progress
 ## 🛠 Core Features & Capabilities
 
 ### 🎼 Lingua Trading Language
-Custom trading language supporting:
-```lingua
-strategy EMACloudStrategy {
-  parameter fastPeriod = 9
-  parameter slowPeriod = 20
-  parameter riskPercent = 0.02
-  
-  indicator emaFast = EMA(close, fastPeriod)
-  indicator emaSlow = EMA(close, slowPeriod)
-  indicator atr = ATR(14)
-  
-  rule longEntry: emaFast > emaSlow AND emaFast[1] <= emaSlow[1] => 
-    buy size calculateSize(riskPercent, atr)
-    
-  rule longExit: emaFast < emaSlow =>
-    sell all
-}
+Complete systematic framework for trading price action patterns:
+
+**Core Methodology:**
+- **Trend Cycles**: 8-stage systematic approach (Consolidation → Breakout → Uptrend → Extreme Deviation → Euphoric Top → Trend Break → Backside → Backside Reverted)
+- **Timeframe Hierarchy**: HTF (setup ID) → MTF (route timing) → LTF (execution)  
+- **High EV Spots**: Systematic identification of profitable opportunities
+- **Custom Indicators**: EMA clouds, deviation bands, trail systems
+
+**Systematic Strategies:**
+- **OS D1**: Small cap day one setup (70%+ win rate)
+- **G2G S1**: Gap-to-go system
+- **SC DMR/MDR**: Small cap momentum systems
+- **LC Strategies**: Large cap implementations
+
+**Complete Documentation**: `docs/knowledge/` - 4+ years of trading expertise systematized
 ```
 
 ### 📈 Custom Technical Indicators

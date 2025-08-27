@@ -1,0 +1,231 @@
+---
+validation_framework:
+  name: "BRF Indicator Validation Framework"
+  id: "brf-indicator-validation"
+  version: "1.0.0"
+  description: "Comprehensive validation framework for BRF strategy indicators"
+
+validation_scope:
+  indicators_to_validate:
+    - "vwap_multi_timeframe"
+    - "lingua_atr_deviation_bands"  
+    - "bar_break_trigger"
+    
+  validation_types:
+    - "mathematical_accuracy"
+    - "historical_performance"
+    - "real_time_reliability"
+    - "integration_consistency"
+
+mathematical_accuracy_tests:
+  vwap_validation:
+    reference_implementation: "standard_vwap_talib"
+    test_datasets:
+      - "high_volume_stocks_sample"
+      - "low_volume_stocks_sample"
+      - "gap_up_gap_down_scenarios"
+      - "split_dividend_adjusted_data"
+      
+    accuracy_requirements:
+      tolerance: "0.01%"
+      correlation: "> 0.999"
+      
+    test_cases:
+      - name: "session_reset_accuracy"
+        description: "Verify VWAP resets correctly at session start"
+        expected_result: "clean_reset_no_carryover"
+        
+      - name: "volume_weighting_correctness"
+        description: "Verify volume weighting calculations"
+        expected_result: "matches_reference_implementation"
+        
+      - name: "timeframe_synchronization"
+        description: "Verify 5m and 15m calculations align properly"
+        expected_result: "15m_equals_aggregated_5m_periods"
+
+  deviation_bands_validation:
+    reference_implementation: "bollinger_bands_equivalent"
+    
+    test_cases:
+      - name: "atr_calculation_accuracy"
+        description: "Verify ATR calculations match standard"
+        tolerance: "0.005%"
+        
+      - name: "band_width_adaptation"
+        description: "Verify adaptive multiplier adjustments"
+        scenarios: ["low_vol", "normal_vol", "high_vol"]
+        
+      - name: "vwap_reference_consistency"
+        description: "Verify bands properly reference VWAP center"
+        expected_result: "symmetric_around_vwap"
+
+  bar_break_trigger_validation:
+    reference_method: "manual_chart_analysis"
+    
+    test_cases:
+      - name: "trigger_timing_precision"
+        description: "Verify triggers occur at correct bar closes"
+        expected_latency: "< 5_seconds"
+        
+      - name: "volume_threshold_accuracy"
+        description: "Verify volume calculations and thresholds"
+        tolerance: "1%"
+        
+      - name: "signal_quality_scoring"
+        description: "Verify scoring algorithm consistency"
+        method: "back_test_correlation_with_outcomes"
+
+historical_performance_validation:
+  test_universe:
+    selection_criteria:
+      - "small_cap_stocks_market_cap_under_2B"
+      - "minimum_daily_volume_1M_shares"
+      - "price_range_5_to_50_dollars"
+      - "excludes_penny_stocks_and_otc"
+      
+    sample_size: "100_stocks_minimum"
+    time_period: "2_years_historical_data"
+    
+  performance_metrics:
+    indicator_effectiveness:
+      vwap_signals:
+        - "break_signal_accuracy_rate"
+        - "false_break_frequency"
+        - "signal_to_reversal_timing"
+        
+      deviation_bands:
+        - "overextension_signal_reliability"
+        - "mean_reversion_success_rate"
+        - "band_touch_to_reversal_percentage"
+        
+      bar_break_triggers:
+        - "trigger_to_profit_conversion_rate"
+        - "invalidation_signal_speed"
+        - "follow_through_prediction_accuracy"
+        
+  benchmark_requirements:
+    minimum_performance_thresholds:
+      signal_accuracy: "> 60%"
+      false_signal_rate: "< 30%"
+      profit_conversion: "> 55%"
+      
+    comparative_analysis:
+      - "vs_standard_technical_indicators"
+      - "vs_simple_vwap_break_system"
+      - "vs_bollinger_band_system"
+
+real_time_reliability_tests:
+  latency_requirements:
+    indicator_calculations:
+      vwap_updates: "< 100ms"
+      band_updates: "< 200ms"
+      trigger_generation: "< 500ms"
+      
+  stress_testing:
+    high_frequency_scenarios:
+      - "1000_symbols_simultaneous_processing"
+      - "market_open_volume_spike_handling"
+      - "earnings_announcement_volatility"
+      
+    data_integrity_tests:
+      - "missing_data_handling"
+      - "bad_tick_filtering"
+      - "network_interruption_recovery"
+      
+  system_stability:
+    memory_usage_monitoring: "< 100MB_per_symbol"
+    cpu_usage_monitoring: "< 10%_per_symbol"
+    error_recovery_testing: "graceful_degradation"
+
+integration_consistency_validation:
+  cross_indicator_validation:
+    timeframe_alignment:
+      - "5m_and_15m_vwap_consistency"
+      - "band_calculations_using_same_vwap"
+      - "trigger_timing_across_timeframes"
+      
+    signal_coordination:
+      - "trigger_signals_align_with_band_signals"
+      - "vwap_breaks_correlate_with_triggers"
+      - "invalidation_signals_consistent"
+      
+  strategy_integration_tests:
+    entry_signal_validation:
+      - "all_components_align_for_entries"
+      - "signal_strength_correlates_with_outcomes"
+      - "timeframe_hierarchy_respected"
+      
+    risk_management_integration:
+      - "stop_levels_reference_correct_vwap"
+      - "position_sizing_uses_correct_atr"
+      - "invalidation_triggers_system_wide"
+
+validation_execution_plan:
+  phase_1_mathematical_validation:
+    duration: "2_days"
+    deliverables:
+      - "mathematical_accuracy_report"
+      - "calculation_performance_benchmarks"
+      - "error_identification_and_fixes"
+      
+  phase_2_historical_validation:
+    duration: "3_days" 
+    deliverables:
+      - "historical_performance_analysis"
+      - "parameter_optimization_results"
+      - "benchmark_comparison_report"
+      
+  phase_3_integration_validation:
+    duration: "2_days"
+    deliverables:
+      - "cross_indicator_consistency_report"
+      - "strategy_integration_validation"
+      - "system_reliability_assessment"
+      
+  phase_4_real_time_validation:
+    duration: "3_days"
+    deliverables:
+      - "real_time_performance_report"
+      - "stress_test_results"
+      - "production_readiness_assessment"
+
+validation_tools:
+  testing_framework:
+    unit_tests: "jest_typescript_framework"
+    integration_tests: "custom_backtesting_engine"
+    performance_tests: "load_testing_suite"
+    
+  data_sources:
+    historical_data: "polygon_io_api"
+    reference_calculations: "talib_library"
+    benchmark_data: "yahoo_finance_api"
+    
+  reporting_tools:
+    - "automated_test_reporting"
+    - "performance_visualization_dashboard"
+    - "error_tracking_and_alerting"
+
+acceptance_criteria:
+  must_pass_requirements:
+    - "all_mathematical_accuracy_tests_pass"
+    - "historical_performance_exceeds_thresholds"
+    - "real_time_latency_requirements_met"
+    - "integration_consistency_validated"
+    
+  conditional_requirements:
+    - "parameter_optimization_improvements_documented"
+    - "edge_case_handling_validated"
+    - "fallback_systems_tested"
+    
+  documentation_requirements:
+    - "validation_results_comprehensive_report"
+    - "known_limitations_documented"
+    - "deployment_recommendations_provided"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "indicator-developer"
+  validation_priority: "critical"
+  estimated_duration: "10_days"
+  success_criteria: "all_acceptance_criteria_met"
+  next_phase_dependency: "strategy_implementation"

@@ -1,0 +1,211 @@
+---
+indicator:
+  name: "Multi-Timeframe VWAP"
+  id: "vwap-multi-tf"
+  version: "1.0.0"
+  category: "volume-price"
+  description: "Volume Weighted Average Price calculation for 5m and 15m timeframes"
+
+implementation:
+  base_calculation:
+    formula: "VWAP = Σ(Price × Volume) / Σ(Volume)"
+    price_reference: "typical_price"
+    typical_price_calc: "(High + Low + Close) / 3"
+    
+  timeframes:
+    tf_5m:
+      period: "5_minutes"
+      session_reset: "daily"
+      calculation_window: "rolling_session"
+      update_frequency: "per_bar_close"
+      
+    tf_15m:
+      period: "15_minutes"
+      session_reset: "daily"
+      calculation_window: "rolling_session"
+      update_frequency: "per_bar_close"
+
+parameters:
+  session_definition:
+    start_time: "09:30:00"
+    end_time: "16:00:00"
+    timezone: "US/Eastern"
+    reset_behavior: "daily_at_session_start"
+    
+  volume_handling:
+    minimum_volume_threshold: 100
+    volume_spike_filter: "none"  # Raw volume used
+    zero_volume_handling: "skip_bar"
+    
+  price_handling:
+    gap_handling: "include_gaps"
+    split_adjustment: "automatic"
+    dividend_adjustment: "automatic"
+
+output_specifications:
+  primary_outputs:
+    vwap_5m:
+      description: "5-minute VWAP value"
+      data_type: "float"
+      precision: 4
+      
+    vwap_15m:
+      description: "15-minute VWAP value"
+      data_type: "float"
+      precision: 4
+      
+  derived_outputs:
+    vwap_deviation_5m:
+      description: "Current price deviation from 5m VWAP"
+      calculation: "(current_price - vwap_5m) / vwap_5m * 100"
+      data_type: "percentage"
+      
+    vwap_deviation_15m:
+      description: "Current price deviation from 15m VWAP"
+      calculation: "(current_price - vwap_15m) / vwap_15m * 100"
+      data_type: "percentage"
+      
+    vwap_slope_5m:
+      description: "Rate of change of 5m VWAP"
+      calculation: "3_bar_linear_regression_slope"
+      data_type: "float"
+      
+    vwap_slope_15m:
+      description: "Rate of change of 15m VWAP"
+      calculation: "3_bar_linear_regression_slope" 
+      data_type: "float"
+
+signal_generation:
+  break_signals:
+    vwap_break_5m:
+      condition: "price_closes_below_vwap_5m"
+      confirmation: "next_bar_opens_below_vwap"
+      volume_requirement: "above_20_bar_average"
+      
+    vwap_break_15m:
+      condition: "price_closes_below_vwap_15m"
+      confirmation: "sustained_for_2_bars_minimum"
+      volume_requirement: "above_20_bar_average"
+      
+  reclaim_signals:
+    vwap_reclaim_5m:
+      condition: "price_closes_above_vwap_5m"
+      confirmation: "volume_exceeds_break_volume"
+      invalidation_threshold: "strong_close_above"
+      
+    vwap_reclaim_15m:
+      condition: "price_closes_above_vwap_15m"  
+      confirmation: "sustained_for_3_bars_minimum"
+      invalidation_threshold: "strong_close_above"
+
+quality_metrics:
+  accuracy_validation:
+    method: "cross_reference_with_standard_vwap"
+    tolerance: "0.01%"
+    
+  performance_requirements:
+    calculation_latency: "< 100ms per update"
+    memory_usage: "< 10MB per symbol"
+    cpu_usage: "< 5% per symbol"
+    
+  data_integrity:
+    missing_data_handling: "interpolation_for_gaps_under_5_minutes"
+    bad_data_detection: "price_volume_sanity_checks"
+    error_reporting: "log_and_alert_on_calculation_failures"
+
+integration_specifications:
+  data_inputs:
+    required:
+      - "timestamp"
+      - "open_price"
+      - "high_price" 
+      - "low_price"
+      - "close_price"
+      - "volume"
+      
+    optional:
+      - "number_of_trades"
+      - "dollar_volume"
+      
+  output_format:
+    structure: "json"
+    fields:
+      - "timestamp"
+      - "symbol"
+      - "vwap_5m"
+      - "vwap_15m"
+      - "deviation_5m"
+      - "deviation_15m"
+      - "slope_5m"
+      - "slope_15m"
+      
+  api_endpoints:
+    real_time: "/indicators/vwap/realtime/{symbol}"
+    historical: "/indicators/vwap/historical/{symbol}/{start_date}/{end_date}"
+    bulk_calculate: "/indicators/vwap/bulk"
+
+implementation_code:
+  language: "typescript"
+  dependencies:
+    - "talib"
+    - "pandas_equivalent"
+    - "real_time_data_handler"
+    
+  class_structure: |
+    class MultiTimeframeVWAP {
+      private session_data_5m: SessionData
+      private session_data_15m: SessionData
+      
+      constructor(symbol: string, session_config: SessionConfig)
+      
+      public update(bar: OHLCV): VWAPResult
+      public reset_session(): void
+      public get_current_values(): VWAPValues
+      
+      private calculate_vwap(data: SessionData): number
+      private update_session_data(bar: OHLCV, timeframe: string): void
+      private generate_signals(): VWAPSignals
+    }
+
+testing_specifications:
+  unit_tests:
+    - "vwap_calculation_accuracy"
+    - "session_reset_functionality"
+    - "timeframe_synchronization"
+    - "volume_weighting_correctness"
+    
+  integration_tests:
+    - "multi_symbol_handling"
+    - "real_time_data_processing"
+    - "historical_backfill_accuracy"
+    
+  performance_tests:
+    - "high_frequency_update_handling"
+    - "memory_leak_detection"
+    - "concurrent_symbol_processing"
+
+deployment_requirements:
+  infrastructure:
+    - "real_time_market_data_feed"
+    - "historical_data_storage"
+    - "high_frequency_computing_resources"
+    
+  monitoring:
+    - "calculation_accuracy_alerts"
+    - "performance_degradation_detection"
+    - "data_feed_connectivity_monitoring"
+    
+  backup_systems:
+    - "alternative_calculation_method"
+    - "cached_value_fallback"
+    - "manual_override_capability"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "indicator-developer"
+  complexity: "medium"
+  estimated_implementation_time: "3_days"
+  validation_requirements:
+    - "historical_data_backtesting"
+    - "real_time_accuracy_verification"
+    - "cross_platform_compatibility"

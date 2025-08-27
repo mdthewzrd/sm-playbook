@@ -1,0 +1,263 @@
+---
+trading_rules:
+  strategy_id: "brf-strategy"
+  name: "Backside Reversion & Fade Trading Rules"
+  version: "1.0.0"
+  
+entry_system:
+  multi_stage_entries:
+    philosophy: "Phased entry approach to capture reversal with reduced risk"
+    total_stages: 3
+    position_allocation: "equal_weight_per_stage"
+    
+    stage_1:
+      name: "Initial Reversal Signal"
+      position_percentage: 33
+      trigger_conditions:
+        primary:
+          - condition: "15m_vwap_break"
+            description: "Price breaks below 15-minute VWAP with volume"
+            validation:
+              - "volume_exceeds_15m_average_by_20_percent"
+              - "break_sustained_for_minimum_2_bars"
+              - "no_immediate_reclaim_above_vwap"
+              
+        confirmation:
+          - condition: "5m_bar_break_trigger"
+            description: "5-minute timeframe confirms entry timing"
+            validation:
+              - "follow_through_bar_shows_continuation"
+              - "volume_profile_supports_move"
+              - "price_action_weak_on_bounces"
+              
+        risk_validation:
+          - condition: "deviation_bands_overextended"
+            description: "Price showing overextension via deviation bands"
+            validation:
+              - "price_beyond_upper_deviation_band"
+              - "band_width_above_average"
+              - "mean_reversion_probability_high"
+              
+      execution:
+        order_type: "limit_order"
+        price_reference: "current_bid"
+        timeout: "5_minutes"
+        size_calculation: "total_planned_risk * 0.33"
+        
+    stage_2:
+      name: "Continuation Confirmation"
+      position_percentage: 33
+      dependency: "stage_1_filled"
+      
+      trigger_conditions:
+        primary:
+          - condition: "momentum_continuation"
+            description: "Price continues through deviation bands"
+            validation:
+              - "price_breaks_through_lower_deviation_band"
+              - "momentum_indicators_support_move"
+              - "15m_and_5m_timeframes_aligned"
+              
+        volume_confirmation:
+          - condition: "volume_profile_validation"
+            description: "Volume profile supports continued move"
+            validation:
+              - "cumulative_volume_above_threshold"
+              - "selling_pressure_visible_in_tape"
+              - "bid_ask_spread_remains_normal"
+              
+        risk_reward_check:
+          - condition: "favorable_risk_reward"
+            description: "Risk/reward still meets criteria after stage 1"
+            validation:
+              - "stop_distance_reasonable"
+              - "profit_target_achievable"
+              - "total_position_risk_within_limits"
+              
+      timing:
+        minimum_delay_after_stage_1: "2_minutes"
+        maximum_delay_after_stage_1: "15_minutes"
+        
+      execution:
+        order_type: "market_order"
+        size_calculation: "total_planned_risk * 0.33"
+        
+    stage_3:
+      name: "Maximum Conviction"
+      position_percentage: 34
+      dependency: "stage_2_filled"
+      
+      trigger_conditions:
+        primary:
+          - condition: "strong_momentum_continuation"
+            description: "Clear momentum continuation with alignment"
+            validation:
+              - "both_timeframes_showing_bearish_momentum"
+              - "price_acceleration_visible"
+              - "volume_supporting_move"
+              
+        conviction_indicators:
+          - condition: "pattern_maturation"
+            description: "Backside runner pattern fully matured"
+            validation:
+              - "all_pattern_criteria_met"
+              - "invalidation_conditions_absent"
+              - "market_context_supportive"
+              
+      timing:
+        minimum_delay_after_stage_2: "1_minute"
+        maximum_delay_after_stage_2: "10_minutes"
+        
+      execution:
+        order_type: "market_order"
+        size_calculation: "remaining_planned_risk"
+        
+pyramiding_logic:
+  risk_management:
+    max_total_risk: 0.02  # 2% of account
+    individual_stage_risk: 0.0067  # ~0.67% per stage
+    position_correlation: "check_existing_positions"
+    
+  add_conditions:
+    technical:
+      - "price_momentum_continuing"
+      - "volume_supporting_adds"
+      - "no_reversal_signals_present"
+      
+    risk:
+      - "total_portfolio_risk_within_limits"
+      - "individual_position_risk_acceptable"
+      - "correlation_with_existing_positions_low"
+      
+    timing:
+      - "sufficient_time_between_adds"
+      - "market_hours_appropriate"
+      - "volatility_within_normal_ranges"
+      
+  invalidation_triggers:
+    immediate_stop:
+      - "strong_reclaim_above_entry_vwap"
+      - "volume_spike_with_reversal_characteristics"
+      - "broad_market_reversal_signal"
+      
+    gradual_invalidation:
+      - "time_decay_without_follow_through"
+      - "volume_drying_up"
+      - "choppy_price_action_development"
+
+exit_system:
+  profit_taking:
+    philosophy: "Phased exits to capture profit while allowing for extended moves"
+    
+    stage_1_exit:
+      percentage: 30
+      trigger: "quick_profit_target"
+      target_calculation: "entry_price - (0.5 * daily_atr)"
+      order_type: "limit_order"
+      timeout: "market_close"
+      
+    stage_2_exit:
+      percentage: 50
+      trigger: "primary_profit_target"
+      target_calculation: "entry_price - (1.0 * daily_atr)"
+      order_type: "limit_order"
+      timeout: "market_close"
+      
+    stage_3_exit:
+      percentage: 20
+      trigger: "extended_target_or_trailing_stop"
+      target_calculation: "entry_price - (1.5 * daily_atr)"
+      alternative: "trailing_stop_system"
+      
+  trailing_stop_system:
+    activation_trigger: "stage_2_profit_taken"
+    method: "vwap_based_trailing"
+    
+    parameters:
+      initial_trail_distance: "1.0 * atr"
+      trail_adjustment_frequency: "per_5m_bar"
+      minimum_trail_distance: "0.5 * atr"
+      maximum_trail_distance: "2.0 * atr"
+      
+    reference_calculation:
+      base: "current_5m_vwap"
+      adjustment: "plus_dynamic_atr_multiple"
+      
+  stop_loss_system:
+    hard_stops:
+      initial_stop: "entry_vwap + (1.5 * daily_atr)"
+      maximum_loss: "2% of account value"
+      time_stop: "15_minutes_before_market_close"
+      
+    dynamic_stops:
+      method: "vwap_based_dynamic"
+      adjustment_frequency: "per_15m_bar"
+      tightening_conditions:
+        - "profit_target_1_achieved"
+        - "momentum_showing_exhaustion"
+        - "time_decay_factor"
+        
+    pattern_invalidation_stops:
+      triggers:
+        - "strong_reclaim_above_pattern_vwap"
+        - "volume_spike_reversal"
+        - "broad_market_shift"
+      execution: "immediate_market_order"
+
+risk_controls:
+  position_level:
+    max_position_size: "2% account risk"
+    correlation_limit: "0.3 with existing positions"
+    sector_concentration_limit: "10% of portfolio"
+    
+  strategy_level:
+    max_concurrent_positions: 3
+    daily_loss_limit: "4% of account"
+    weekly_loss_limit: "8% of account"
+    
+  system_level:
+    market_regime_filter: "active"
+    volatility_filter: "VIX_below_30"
+    time_filter: "no_trades_last_30min_session"
+
+execution_specifications:
+  order_management:
+    entry_orders:
+      stage_1: "limit_order_at_bid"
+      stage_2: "market_order"
+      stage_3: "market_order"
+      
+    exit_orders:
+      profit_targets: "limit_orders"
+      stops: "stop_market_orders"
+      time_exits: "market_on_close"
+      
+  timing_requirements:
+    minimum_gap_between_entries: "1_minute"
+    maximum_total_entry_time: "20_minutes"
+    profit_target_order_placement: "immediate"
+    stop_order_placement: "immediate"
+    
+  slippage_expectations:
+    entry_slippage: "0.05% for stage 1, 0.1% for stages 2-3"
+    exit_slippage: "0.1% for profits, 0.15% for stops"
+    
+performance_tracking:
+  key_metrics:
+    - "win_rate_by_stage"
+    - "average_profit_per_stage"
+    - "time_to_profit_targets"
+    - "stop_loss_frequency"
+    - "pattern_invalidation_rate"
+    
+  reporting_requirements:
+    - "daily_performance_summary"
+    - "weekly_pattern_analysis"
+    - "monthly_rule_effectiveness_review"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  complexity: "high"
+  validation_required: "extensive_backtesting"
+  estimated_implementation_time: "1_week"

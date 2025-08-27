@@ -1,0 +1,2 @@
+timestamp,run_id,fast,slow,return_pct,win_rate_pct,trades,max_drawdown_pct,sharpe,data_path
+2025-08-26T17:27:43,1756243663,10,50,15.3,58.2,42,-8.5,1.24,synthetic_data

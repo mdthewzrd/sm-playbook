@@ -1,0 +1,275 @@
+---
+risk_management_system:
+  name: "BRF Comprehensive Risk Management Engine"
+  id: "brf-risk-engine"
+  version: "1.0.0"
+  description: "Multi-layered risk management system for BRF strategy covering position, strategy, and portfolio levels"
+
+risk_management_philosophy:
+  primary_objective: "Preserve capital while allowing strategy to achieve full profit potential"
+  layered_approach: "Multiple independent risk controls with escalating responses"
+  adaptive_framework: "Risk parameters adjust based on market conditions and performance"
+
+position_level_risk_management:
+  individual_position_controls:
+    maximum_position_risk:
+      base_risk: "2_percent_account_value"
+      calculation_method: "total_position_size * stop_distance / account_value"
+      hard_limit: "2.5_percent_under_exceptional_circumstances"
+      
+    position_sizing_constraints:
+      minimum_position_size: "0.1_percent_account_value"
+      maximum_position_size: "2_percent_account_value"
+      granularity: "0.05_percent_increments"
+      
+    correlation_limits:
+      same_sector_positions: "maximum_correlation_0.7"
+      similar_pattern_positions: "maximum_correlation_0.5"
+      portfolio_concentration: "no_single_position_over_3_percent"
+      
+  stop_loss_management:
+    initial_stop_calculation:
+      method: "vwap_plus_atr_based"
+      formula: "15m_vwap + (1.5 * 15m_atr)"
+      minimum_stop_distance: "0.5_percent_entry_price"
+      maximum_stop_distance: "3.0_percent_entry_price"
+      
+    dynamic_stop_adjustment:
+      trailing_activation: "after_first_profit_target_achieved"
+      trailing_method: "5m_vwap_based_with_15m_bias"
+      
+      tightening_conditions:
+        - "momentum_exhaustion_detected"
+        - "volume_declining_significantly"
+        - "pattern_showing_invalidation_signs"
+        - "time_decay_factor_activation"
+        
+      stop_adjustment_frequency: "per_5m_bar_close"
+      minimum_adjustment_increment: "0.1_percent_price"
+      
+    emergency_stop_conditions:
+      pattern_invalidation:
+        trigger: "strong_vwap_reclaim_with_volume"
+        response: "immediate_market_order_exit"
+        override: "all_other_exit_rules"
+        
+      volatility_spike:
+        trigger: "atr_exceeds_3x_normal_range"
+        response: "tighten_stops_to_breakeven_or_small_profit"
+        
+      news_event:
+        trigger: "significant_news_announcement"
+        response: "evaluate_for_immediate_exit"
+
+strategy_level_risk_management:
+  concurrent_position_limits:
+    maximum_positions:
+      total_brf_positions: 3
+      same_sector_positions: 2
+      highly_correlated_positions: 1
+      
+    timing_constraints:
+      minimum_gap_between_entries: "15_minutes"
+      maximum_positions_per_hour: 2
+      daily_position_limit: 5
+      
+  daily_risk_controls:
+    daily_loss_limits:
+      hard_stop: "4_percent_account_value"
+      soft_warning: "2_percent_account_value"
+      evaluation_threshold: "1_percent_account_value"
+      
+    daily_risk_allocation:
+      maximum_daily_risk: "6_percent_account_value"
+      reserved_for_existing_positions: "calculated_dynamically"
+      available_for_new_positions: "daily_max_minus_current_exposure"
+      
+  drawdown_management:
+    strategy_drawdown_limits:
+      maximum_strategy_drawdown: "8_percent_from_high_water_mark"
+      warning_drawdown: "5_percent_from_high_water_mark"
+      evaluation_drawdown: "3_percent_from_high_water_mark"
+      
+    drawdown_responses:
+      at_warning_level: "reduce_position_sizes_by_25_percent"
+      at_maximum_level: "halt_new_positions_review_parameters"
+      recovery_threshold: "above_warning_level_for_5_trading_days"
+
+portfolio_level_risk_management:
+  account_protection:
+    total_account_exposure:
+      maximum_total_risk: "10_percent_account_value"
+      maximum_margin_utilization: "25_percent_account_value"
+      cash_reserve_requirement: "20_percent_account_value"
+      
+    diversification_requirements:
+      sector_concentration: "no_sector_over_30_percent_exposure"
+      strategy_concentration: "brf_maximum_40_percent_total_risk"
+      time_diversification: "no_more_than_50_percent_positions_same_day"
+      
+  correlation_monitoring:
+    inter_strategy_correlation:
+      measurement_frequency: "daily_rolling_30_day"
+      warning_threshold: "correlation_above_0.8"
+      action_threshold: "correlation_above_0.9"
+      
+    market_correlation:
+      beta_monitoring: "strategy_beta_vs_spy"
+      maximum_beta: "1.5_in_normal_conditions"
+      beta_adjustment: "reduce_exposure_if_beta_exceeds_threshold"
+
+market_regime_risk_adjustments:
+  volatility_regime_responses:
+    low_volatility_environment:
+      position_size_adjustment: "increase_by_10_percent"
+      stop_distance_adjustment: "tighten_by_0.1_atr"
+      profit_target_adjustment: "extend_slightly"
+      
+    normal_volatility_environment:
+      position_size_adjustment: "use_standard_sizing"
+      stop_distance_adjustment: "use_standard_stops"
+      profit_target_adjustment: "use_standard_targets"
+      
+    high_volatility_environment:
+      position_size_adjustment: "reduce_by_20_percent"
+      stop_distance_adjustment: "widen_by_0.2_atr"
+      profit_target_adjustment: "take_profits_more_aggressively"
+      
+  market_trend_adjustments:
+    strong_bull_market:
+      risk_adjustment: "strategy_less_effective_reduce_exposure"
+      sizing_modifier: "0.7x_standard_size"
+      
+    neutral_market:
+      risk_adjustment: "optimal_conditions_standard_exposure"
+      sizing_modifier: "1.0x_standard_size"
+      
+    bear_market:
+      risk_adjustment: "favorable_conditions_increase_exposure"
+      sizing_modifier: "1.2x_standard_size"
+      
+  time_based_risk_controls:
+    intraday_risk_management:
+      market_open_adjustment:
+        time_window: "09:30_to_10:30"
+        risk_adjustment: "reduce_position_sizes_by_20_percent"
+        reasoning: "higher_volatility_and_uncertainty"
+        
+      lunch_period_adjustment:
+        time_window: "12:00_to_14:00"
+        risk_adjustment: "standard_risk_parameters"
+        reasoning: "normal_volatility_period"
+        
+      market_close_adjustment:
+        time_window: "15:30_to_16:00"
+        risk_adjustment: "no_new_positions_force_exits"
+        reasoning: "closing_auction_unpredictability"
+
+real_time_risk_monitoring:
+  continuous_monitoring_systems:
+    position_tracking:
+      real_time_pnl: "updated_per_tick"
+      unrealized_risk: "calculated_continuously"
+      correlation_changes: "monitored_per_minute"
+      
+    threshold_monitoring:
+      stop_loss_proximity: "alert_when_within_0.2_percent"
+      profit_target_proximity: "alert_when_within_0.1_percent"
+      risk_limit_utilization: "alert_when_above_80_percent"
+      
+  automated_responses:
+    risk_limit_breaches:
+      position_level: "automatic_position_exit"
+      strategy_level: "halt_new_entries"
+      portfolio_level: "emergency_risk_reduction"
+      
+    system_failures:
+      data_feed_loss: "maintain_current_stops_halt_new_entries"
+      execution_system_failure: "emergency_manual_override_mode"
+      risk_system_failure: "conservative_fallback_mode"
+
+risk_reporting_and_alerts:
+  real_time_alerts:
+    critical_alerts:
+      - "stop_loss_triggered"
+      - "daily_loss_limit_approached"
+      - "position_correlation_limit_exceeded"
+      - "emergency_market_conditions"
+      
+    warning_alerts:
+      - "approaching_risk_limits"
+      - "unusual_correlation_patterns"
+      - "performance_degradation_detected"
+      - "market_regime_change_detected"
+      
+  risk_reporting:
+    daily_risk_report:
+      - "current_risk_exposure_by_position"
+      - "risk_limit_utilization_percentages"
+      - "correlation_matrix_analysis"
+      - "performance_attribution_by_risk_factor"
+      
+    weekly_risk_review:
+      - "risk_adjusted_performance_metrics"
+      - "drawdown_analysis_and_recovery"
+      - "risk_parameter_effectiveness"
+      - "recommended_parameter_adjustments"
+
+stress_testing_framework:
+  scenario_analysis:
+    market_crash_scenario:
+      assumption: "10_percent_market_decline_in_single_day"
+      impact_assessment: "calculate_portfolio_impact"
+      response_plan: "emergency_exit_procedures"
+      
+    volatility_spike_scenario:
+      assumption: "vix_doubles_overnight"
+      impact_assessment: "recalculate_all_position_risks"
+      response_plan: "adjust_stops_and_position_sizes"
+      
+    sector_rotation_scenario:
+      assumption: "sudden_sector_rotation_against_holdings"
+      impact_assessment: "correlation_breakdown_analysis"
+      response_plan: "diversification_adjustment_strategy"
+      
+  backtesting_risk_validation:
+    historical_stress_periods:
+      - "march_2020_covid_crash"
+      - "august_2015_china_devaluation"
+      - "january_2018_volmageddon"
+      
+    risk_parameter_optimization:
+      method: "walk_forward_analysis"
+      objective: "maximize_risk_adjusted_returns"
+      constraints: "maintain_maximum_drawdown_limits"
+
+system_integration:
+  dependencies:
+    - "real_time_portfolio_tracking"
+    - "advanced_correlation_calculations"
+    - "market_regime_detection_system"
+    - "emergency_execution_capabilities"
+    
+  data_requirements:
+    - "real_time_account_balances"
+    - "position_level_pnl_tracking"
+    - "market_volatility_indicators"
+    - "sector_and_correlation_data"
+    
+  external_integrations:
+    - "broker_risk_management_apis"
+    - "market_data_feed_redundancy"
+    - "compliance_monitoring_systems"
+    - "performance_attribution_systems"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  complexity: "very_high"
+  criticality: "system_essential"
+  estimated_implementation_time: "5_days"
+  testing_requirements:
+    - "comprehensive_stress_testing"
+    - "real_time_monitoring_validation"
+    - "emergency_response_procedures"
+    - "integration_testing_with_all_strategy_components"

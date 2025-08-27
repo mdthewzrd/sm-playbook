@@ -6,7 +6,12 @@
       "Bash(git init:*)",
       "Bash(code:*)",
       "Bash(brew install:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(cp:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

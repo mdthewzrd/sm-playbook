@@ -1,0 +1,268 @@
+---
+timeframe_coordination:
+  strategy_id: "brf-strategy"
+  name: "BRF Multi-Timeframe Coordination Logic"
+  version: "1.0.0"
+  
+hierarchy:
+  primary_timeframe:
+    period: "15m"
+    role: "strategic_decision_making"
+    responsibilities:
+      - "pattern_identification"
+      - "vwap_trend_analysis"
+      - "profit_target_calculation"
+      - "stop_loss_reference"
+      
+  secondary_timeframe:
+    period: "5m"
+    role: "tactical_execution"
+    responsibilities:
+      - "precise_entry_timing"
+      - "bar_break_trigger_confirmation"
+      - "exit_optimization"
+      - "stop_management"
+
+coordination_logic:
+  pattern_identification:
+    primary_analysis:
+      timeframe: "15m"
+      indicators:
+        - "vwap_relationship"
+        - "deviation_bands_overextension"
+        - "volume_profile_analysis"
+        - "momentum_indicators"
+        
+    confirmation_analysis:
+      timeframe: "5m"
+      indicators:
+        - "bar_break_triggers"
+        - "volume_confirmation"
+        - "price_action_quality"
+        - "order_flow_indicators"
+        
+  signal_generation:
+    hierarchy_rules:
+      - "15m_must_show_primary_setup"
+      - "5m_provides_entry_timing"
+      - "both_timeframes_must_align_for_entry"
+      - "conflicting_signals_result_in_no_trade"
+      
+    alignment_criteria:
+      vwap_alignment:
+        condition: "both_timeframes_show_vwap_break_setup"
+        tolerance: "5m_can_lag_15m_by_max_2_bars"
+        
+      momentum_alignment:
+        condition: "momentum_indicators_directionally_consistent"
+        tolerance: "minor_divergences_acceptable_if_trend_clear"
+        
+      volume_alignment:
+        condition: "volume_supports_move_on_both_timeframes"
+        tolerance: "5m_volume_can_be_uneven_if_15m_strong"
+
+entry_coordination:
+  stage_1_entry:
+    trigger_timeframe: "15m"
+    confirmation_timeframe: "5m"
+    
+    process:
+      step_1:
+        description: "15m VWAP break signal generated"
+        validation:
+          - "price_breaks_below_15m_vwap"
+          - "volume_exceeds_15m_average"
+          - "deviation_bands_show_overextension"
+          
+      step_2:
+        description: "5m confirmation check"
+        validation:
+          - "5m_shows_same_directional_bias"
+          - "5m_vwap_relationship_consistent"
+          - "bar_break_trigger_conditions_met"
+          
+      step_3:
+        description: "Entry execution decision"
+        criteria:
+          - "both_timeframes_aligned"
+          - "risk_reward_favorable"
+          - "market_context_supportive"
+          
+  stage_2_entry:
+    monitoring_timeframe: "5m"
+    validation_timeframe: "15m"
+    
+    process:
+      continuous_monitoring:
+        frequency: "per_5m_bar"
+        checks:
+          - "momentum_continuation"
+          - "volume_profile_development"
+          - "price_action_quality"
+          
+      15m_validation:
+        frequency: "per_15m_bar"
+        checks:
+          - "trend_integrity_maintained"
+          - "deviation_bands_behavior"
+          - "pattern_invalidation_absent"
+          
+  stage_3_entry:
+    execution_timeframe: "5m"
+    strategic_confirmation: "15m"
+    
+    conditions:
+      5m_signals:
+        - "strong_momentum_acceleration"
+        - "volume_supporting_move"
+        - "price_action_decisive"
+        
+      15m_confirmation:
+        - "pattern_fully_developed"
+        - "no_reversal_signals"
+        - "deviation_bands_extreme"
+
+exit_coordination:
+  profit_target_calculation:
+    base_timeframe: "15m"
+    reference: "15m_atr_for_target_distances"
+    
+    stage_1_target:
+      calculation: "entry_price - (0.5 * 15m_atr)"
+      monitoring: "5m_for_precise_fill_timing"
+      
+    stage_2_target:
+      calculation: "entry_price - (1.0 * 15m_atr)"
+      monitoring: "5m_for_precise_fill_timing"
+      
+    stage_3_target:
+      calculation: "entry_price - (1.5 * 15m_atr)"
+      alternative: "trailing_stop_system"
+      
+  stop_loss_coordination:
+    calculation_timeframe: "15m"
+    management_timeframe: "5m"
+    
+    initial_stop:
+      reference: "15m_vwap + (1.5 * 15m_atr)"
+      placement: "based_on_5m_price_action"
+      
+    dynamic_adjustment:
+      frequency: "per_5m_bar"
+      logic: "15m_trend_analysis_with_5m_precision"
+      
+    trailing_stop:
+      activation: "after_stage_1_profit_taken"
+      reference: "15m_trend_line_or_vwap"
+      precision: "5m_bar_closes"
+
+real_time_monitoring:
+  signal_processing:
+    5m_updates:
+      frequency: "every_5_minutes"
+      processing:
+        - "bar_completion_analysis"
+        - "volume_profile_updates"
+        - "momentum_indicator_updates"
+        - "stop_loss_level_checks"
+        
+    15m_updates:
+      frequency: "every_15_minutes"
+      processing:
+        - "trend_integrity_analysis"
+        - "pattern_development_assessment"
+        - "profit_target_validation"
+        - "strategic_stop_level_review"
+        
+  conflict_resolution:
+    priority_system:
+      highest: "risk_management_signals"
+      high: "15m_strategic_changes"
+      medium: "5m_tactical_adjustments"
+      low: "minor_indicator_fluctuations"
+      
+    decision_matrix:
+      15m_bullish_5m_bearish:
+        action: "wait_for_alignment"
+        duration: "maximum_10_minutes"
+        fallback: "no_trade"
+        
+      15m_bearish_5m_bullish:
+        action: "favor_15m_signal"
+        condition: "strong_15m_conviction"
+        alternative: "reduce_position_size"
+        
+      both_timeframes_neutral:
+        action: "no_new_positions"
+        monitoring: "continue_observation"
+        
+data_synchronization:
+  requirements:
+    latency: "sub_second_data_updates"
+    accuracy: "tick_level_precision"
+    reliability: "99.9%_uptime"
+    
+  validation:
+    cross_timeframe_consistency:
+      - "vwap_calculations_consistent"
+      - "volume_data_synchronized"
+      - "price_data_aligned"
+      
+    indicator_synchronization:
+      - "atr_calculations_consistent"
+      - "momentum_indicators_aligned"
+      - "deviation_bands_synchronized"
+      
+error_handling:
+  data_discrepancies:
+    detection: "automated_consistency_checks"
+    response: "pause_trading_until_resolved"
+    notification: "immediate_alert_to_operator"
+    
+  timeframe_conflicts:
+    detection: "signal_alignment_monitoring"
+    response: "favor_conservative_approach"
+    logging: "detailed_conflict_logs"
+    
+  system_failures:
+    5m_data_failure:
+      fallback: "15m_only_mode_with_reduced_size"
+      notification: "immediate_alert"
+      
+    15m_data_failure:
+      response: "halt_new_positions"
+      management: "5m_exit_management_only"
+
+performance_optimization:
+  computational_efficiency:
+    calculation_frequency:
+      - "5m_indicators_updated_per_bar"
+      - "15m_indicators_updated_per_bar"
+      - "cross_timeframe_analysis_every_5m"
+      
+    memory_management:
+      - "rolling_window_calculations"
+      - "efficient_data_structures"
+      - "garbage_collection_optimization"
+      
+  signal_quality:
+    filtering:
+      - "noise_reduction_algorithms"
+      - "signal_strength_validation"
+      - "false_signal_detection"
+      
+    optimization:
+      - "parameter_tuning_based_on_performance"
+      - "adaptive_threshold_adjustment"
+      - "market_regime_adaptation"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  complexity: "high"
+  dependencies:
+    - "real_time_multi_timeframe_data"
+    - "synchronized_indicator_calculations"
+    - "robust_signal_processing_system"
+  validation_status: "formalized"
+  next_phase: "indicator_development"

@@ -1,0 +1,172 @@
+---
+pattern:
+  name: "Backside Runner"
+  id: "backside-runner"
+  category: "reversal-setup"
+  description: "Multi-day pattern identifying momentum stocks ready for mean reversion"
+  
+identification_rules:
+  daily_timeframe:
+    prerequisites:
+      - name: "prior_uptrend"
+        description: "Stock must have shown sustained upward movement"
+        criteria:
+          - "minimum_3_day_uptrend"
+          - "volume_expansion_on_up_days"
+          - "price_above_20_day_moving_average"
+          
+      - name: "recent_consolidation"
+        description: "Pattern shows pause or pullback in momentum"
+        criteria:
+          - "1_to_3_days_consolidation_or_pullback"
+          - "volume_contraction_acceptable"
+          - "price_still_above_key_support_levels"
+    
+    setup_conditions:
+      - name: "vwap_relationship"
+        description: "Price relationship to VWAP indicating potential reversal"
+        criteria:
+          - "price_trading_near_or_above_daily_vwap"
+          - "vwap_slope_showing_momentum_change"
+          - "previous_day_close_relationship_to_vwap"
+          
+      - name: "volume_profile"
+        description: "Volume characteristics supporting pattern"
+        criteria:
+          - "volume_on_up_days_higher_than_down_days"
+          - "no_extreme_volume_spikes_recently"
+          - "average_volume_above_20_day_average"
+
+intraday_confirmation:
+  15_minute_timeframe:
+    pattern_maturation:
+      - name: "vwap_deviation"
+        description: "Price showing extension from VWAP"
+        criteria:
+          - "price_deviation_from_vwap_exceeds_normal_range"
+          - "deviation_bands_showing_overextension"
+          - "momentum_indicators_showing_divergence"
+          
+      - name: "volume_characteristics"
+        description: "Intraday volume supporting reversal thesis"
+        criteria:
+          - "volume_profile_showing_distribution_signs"
+          - "large_block_trading_activity"
+          - "bid_ask_spread_normal_or_tight"
+    
+    entry_trigger_setup:
+      - name: "vwap_break_preparation"
+        description: "Price action setting up for VWAP break"
+        criteria:
+          - "price_testing_vwap_level"
+          - "momentum_slowing_on_approaches_to_vwap"
+          - "order_flow_showing_supply_increase"
+
+  5_minute_timeframe:
+    confirmation_signals:
+      - name: "bar_break_trigger"
+        description: "Precise entry timing mechanism"
+        criteria:
+          - "break_below_vwap_with_volume"
+          - "follow_through_bar_confirmation"
+          - "no_immediate_reversal_back_above_vwap"
+          
+      - name: "momentum_alignment"
+        description: "Short-term momentum supporting move"
+        criteria:
+          - "rsi_showing_overbought_to_neutral_move"
+          - "macd_histogram_declining"
+          - "price_action_showing_weak_bounces"
+
+pattern_invalidation:
+  conditions:
+    - name: "strong_vwap_reclaim"
+      description: "Price strongly reclaims and holds above VWAP"
+      criteria:
+        - "price_closes_above_vwap_with_volume"
+        - "subsequent_bars_hold_above_vwap"
+        - "momentum_indicators_turning_positive"
+        
+    - name: "volume_spike_reversal"
+      description: "Large volume spike indicating pattern failure"
+      criteria:
+        - "volume_exceeds_200%_of_average"
+        - "price_action_strongly_bullish_on_spike"
+        - "reversal_characteristics_absent"
+        
+    - name: "time_decay"
+      description: "Pattern loses validity with time"
+      criteria:
+        - "more_than_2_hours_without_follow_through"
+        - "price_action_becomes_choppy"
+        - "volume_dries_up_significantly"
+
+scoring_system:
+  components:
+    prior_trend_strength:
+      weight: 25
+      calculation: "days_of_uptrend * volume_quality * price_momentum"
+      
+    consolidation_quality:
+      weight: 20
+      calculation: "tightness_of_range * time_in_consolidation * volume_behavior"
+      
+    vwap_setup_quality:
+      weight: 30
+      calculation: "deviation_magnitude * approach_angle * volume_on_approach"
+      
+    intraday_confirmation:
+      weight: 25
+      calculation: "5m_signal_strength * 15m_alignment * order_flow_quality"
+  
+  thresholds:
+    minimum_score: 70
+    high_probability_score: 85
+    maximum_score: 100
+
+risk_assessment:
+  pattern_reliability:
+    historical_success_rate: "estimated_60_65_percent"
+    failure_modes:
+      - "false_break_with_quick_reversal"
+      - "low_volume_follow_through"
+      - "broader_market_momentum_override"
+      
+  risk_factors:
+    - name: "market_regime"
+      impact: "high"
+      description: "Pattern less reliable in strong bull markets"
+      
+    - name: "sector_rotation"
+      impact: "medium"
+      description: "Sector-specific momentum can override pattern"
+      
+    - name: "news_catalyst"
+      impact: "high"
+      description: "Unexpected news can invalidate pattern immediately"
+
+implementation_requirements:
+  data_needs:
+    - "real_time_intraday_data_5m_15m"
+    - "volume_profile_data"
+    - "vwap_calculations_multiple_timeframes"
+    - "historical_pattern_database"
+    
+  computational_requirements:
+    - "pattern_recognition_algorithms"
+    - "multi_timeframe_analysis_engine"
+    - "real_time_scoring_system"
+    - "risk_assessment_calculations"
+    
+  monitoring_requirements:
+    - "pattern_invalidation_alerts"
+    - "score_threshold_notifications"
+    - "market_regime_context_updates"
+
+metadata:
+  created: "2025-08-27"
+  created_by: "strategy-designer"
+  pattern_type: "reversal_setup"
+  complexity: "high"
+  validation_status: "formalized"
+  requires_backtesting: true

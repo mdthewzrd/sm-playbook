@@ -1,0 +1,21 @@
+ticker,date,stage,entry_type,expected_pnl_r,actual_pnl_r,pnl_difference,status,entry_price,exit_price,exit_reason,shares,chart_path
+VAPE,2025-07-28,frontside,opening_fbo,-0.0394291321573493,-0.4301760000000001,-0.39074686784265084,validated,70.8696,63.7,time_cutoff,12,charts/VAPE_2025-07-28 00:00:00_execution_chart.png
+VWAV,2025-07-28,backside_pop,opening_fbo,1.80881705031384,0.34655,-1.46226705031384,invalid,2.32,4.71,time_cutoff,29,charts/VWAV_2025-07-28 00:00:00_execution_chart.png
+CELC,2025-07-28,high_and_tight,opening_fbo,-0.0079319373146566,-0.0009999999999999786,0.006931937314656621,validated,15.68,15.63,time_cutoff,4,charts/CELC_2025-07-28 00:00:00_execution_chart.png
+GTI,2025-07-28,deep_backside,opening_fbo,1.332085886976741,0.6660212970927071,-0.6660645898840338,suspicious,5.6448,9.450635983386897,target_1,35,charts/GTI_2025-07-28 00:00:00_execution_chart.png
+SLRX,2025-07-29,high_and_tight,opening_fbo,1.3453962767829923,0.6561833990939858,-0.6892128776890065,suspicious,38.55,43.23702427924275,target_1,28,charts/SLRX_2025-07-29 00:00:00_execution_chart.png
+CLDI,2025-07-29,deep_backside,opening_fbo,-0.0381100882903652,0.0001679999999999815,0.03827808829036518,validated,6.4176,6.4188,time_cutoff,28,charts/CLDI_2025-07-29 00:00:00_execution_chart.png
+REPL,2025-07-30,backside_pop,opening_fbo,1.1519241097145785,0.099549,-1.0523751097145784,invalid,5.6742,5.92,time_cutoff,81,charts/REPL_2025-07-30 00:00:00_execution_chart.png
+BGLC,2025-07-30,backside_pop,opening_fbo,1.9781792657362376,0.4024999999999999,-1.5756792657362377,invalid,4.3,6.6,time_cutoff,35,charts/BGLC_2025-07-30 00:00:00_execution_chart.png
+SNGX,2025-07-31,backside_pop,opening_fbo,1.7533441077686476,0.06435000000000002,-1.6889941077686474,invalid,1.274,1.56,time_cutoff,45,charts/SNGX_2025-07-31 00:00:00_execution_chart.png
+PHLT,2025-08-01,backside_pop,opening_fbo,0.3636261735619351,0.42939378506938825,0.06576761150745314,validated,3.55,5.547180395671573,target_3,43,charts/PHLT_2025-08-01 00:00:00_execution_chart.png
+MWYN,2025-08-01,deep_backside,opening_fbo,1.8980717699894805,0.07837599999999999,-1.8196957699894805,invalid,1.0192,1.1,time_cutoff,194,charts/MWYN_2025-08-01 00:00:00_execution_chart.png
+VERB,2025-08-04,backside_pop,opening_fbo,2.064570372619748,-0.0025379999999998403,-2.067108372619748,invalid,12.828199999999999,12.8,time_cutoff,18,charts/VERB_2025-08-04 00:00:00_execution_chart.png
+COMM,2025-08-04,deep_backside,opening_fbo,1.8705409676952416,0.05155699999999977,-1.8189839676952417,invalid,10.7702,11.01,time_cutoff,43,charts/COMM_2025-08-04 00:00:00_execution_chart.png
+SCS,2025-08-04,deep_backside,opening_fbo,2.1040881471377446,0.48500000000000004,-1.6190881471377445,invalid,10.34,14.22,time_cutoff,25,charts/SCS_2025-08-04 00:00:00_execution_chart.png
+SNGX,2025-08-04,deep_backside,opening_fbo,1.734886476107043,-0.0022439999999997527,-1.7371304761070427,invalid,2.7243999999999997,2.72,time_cutoff,102,charts/SNGX_2025-08-04 00:00:00_execution_chart.png
+SMXT,2025-08-05,backside_pop,opening_fbo,1.3374745078047392,0.36805750000000004,-0.9694170078047392,suspicious,0.8999,1.54,time_cutoff,115,charts/SMXT_2025-08-05 00:00:00_execution_chart.png
+YMAB,2025-08-05,backside_pop,opening_fbo,2.1274557356356913,0.8897,-1.2377557356356914,invalid,4.23,8.57,time_cutoff,41,charts/YMAB_2025-08-05 00:00:00_execution_chart.png
+AIP,2025-08-05,deep_backside,opening_fbo,2.0970154783181294,0.35481600000000013,-1.7421994783181294,invalid,14.6608,15.4,time_cutoff,96,charts/AIP_2025-08-05 00:00:00_execution_chart.png
+LPSN,2025-08-06,deep_backside,opening_fbo,2.0604983960765355,0.63032926,-1.4301691360765356,invalid,0.881216,1.3795,time_cutoff,253,charts/LPSN_2025-08-06 00:00:00_execution_chart.png
+AVAH,2025-08-07,deep_backside,opening_fbo,1.0965511412902,0.2339999999999998,-0.8625511412902003,suspicious,4.29,4.81,time_cutoff,90,charts/AVAH_2025-08-07 00:00:00_execution_chart.png

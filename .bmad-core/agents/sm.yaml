@@ -1,0 +1,9 @@
+name: sm
+commands:
+demo: ["make", "demo-e2e"]
+backtest: ["make", "backtest"]
+report: ["make", "report"]
+journal: ["make", "journal"]
+limits:
+max_output_tokens: 800
+ask_missing_inputs: 2
