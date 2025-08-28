@@ -1,0 +1,105 @@
+{
+  "strategy_documentation": {
+    "metadata": {
+      "strategy_name": "IBIT_GTZ_EMA_Reversion_Short_v1",
+      "version": "1.0",
+      "creation_date": "2025-08-27T14:52:26-04:00",
+      "author": "strategy_designer_agent",
+      "status": "development"
+    },
+    "description": {
+      "concept": "A short-bias, multi-timeframe mean-reversion strategy designed to capture morning fades that trend for the rest of the day.",
+      "market_hypothesis": "Following a morning pullback (the 'Route Start') against an established hourly downtrend, the asset will resume its downward trajectory. The strategy aims to build a significant position during this fade.",
+      "target_market_conditions": ["trending", "volatile"],
+      "expected_performance": "High hit rate with high risk-to-reward ratio."
+    },
+    "development_roadmap": {
+      "phase_1": {
+        "name": "Initial Backtest & Logic Verification",
+        "objective": "Build the backtesting script for the short-bias version and run it on the last two weeks of IBIT data. The primary goal is for the user to visually confirm that the trade entries, pyramids, and exits on the output chart match the intended strategy logic.",
+        "deliverable": "A candlestick chart of the 5-minute timeframe showing all execution markers."
+      },
+      "phase_2": {
+        "name": "Performance Validation & Optimization",
+        "objective": "Once the logic is confirmed, run the backtest over a longer time period (e.g., 24 months) to assess performance across different market regimes. Identify potential optimizations for the strategy parameters.",
+        "prerequisite": "Successful completion and user sign-off on Phase 1."
+      },
+      "phase_3_future_scope": {
+        "name": "Long-Bias Version Development",
+        "objective": "Develop the 'flipped' long-bias version of the strategy."
+      },
+      "phase_4_future_scope": {
+        "name": "Live Algorithm Build",
+        "objective": "Once both short and long versions are validated and optimized, begin development of a live trading algorithm for paper and potential live deployment."
+      }
+    },
+    "implementation": {
+      "state_management": {
+        "variables": {
+          "short_bias_active": "boolean",
+          "route_start_established": "boolean",
+          "entry_window_open": "boolean",
+          "intraday_high": "float"
+        },
+        "reset_logic": "All state variables reset at the end of each trading day (18:00 EST)."
+      },
+      "regime_filter": {
+        "timeframe": "1H",
+        "logic": "Set 'short_bias_active' to TRUE if EMA(9) is below EMA(20). Otherwise, FALSE."
+      },
+      "setup_logic": {
+        "name": "Route Start",
+        "condition": "IF 'short_bias_active' is TRUE AND current time is between 08:00-12:00 EST AND price trades above EMA(9, '1H'), THEN set 'route_start_established' to TRUE and 'entry_window_open' to TRUE. Record the current session high as 'intraday_high'."
+      },
+      "entry_logic": {
+        "condition": "IF 'route_start_established' is TRUE AND 'entry_window_open' is TRUE:",
+        "triggers": [
+          {
+            "name": "Starter Entry",
+            "timeframe": "2M",
+            "logic": "Enter short on a break of the previous 2-minute bar's low."
+          },
+          {
+            "name": "Main Entry",
+            "timeframe": "5M",
+            "logic": "Enter short on a break of the previous 5-minute bar's low."
+          }
+        ],
+        "entry_window_cutoff": {
+          "logic": "Set 'entry_window_open' to FALSE if price touches or crosses below the Lower Deviation Band on the 5M, 15M, or 1H timeframe."
+        }
+      },
+      "position_sizing": {
+        "pyramiding_condition": "Pyramiding is enabled only after a 5-minute bar closes below VWAP('5M').",
+        "pyramiding_triggers": "Add to short position on pullbacks to the 5M 9/20 EMA cloud or the 2M deviation bands.",
+        "max_pyramids": 4
+      },
+      "risk_management": {
+        "stop_loss_initial": "On 'Main Entry', place stop at 'intraday_high' + $0.01.",
+        "stop_loss_trailing": "For pyramided positions, the stop must always be above the most recent 5-minute swing high and ideally above VWAP('5M')."
+      },
+      "exit_logic": {
+        "primary_target": {
+          "timeframe": "1H",
+          "logic": "Cover a significant portion (e.g., 75%) of the position when price touches the Lower Deviation Band."
+        },
+        "trailing_stop_mode": {
+          "activation": "Activates after the primary target is hit.",
+          "timeframe": "5M",
+          "exit_trigger": "Exit remaining position if price reclaims the 5M 20 EMA AND breaks above a recent 5M swing high."
+        }
+      }
+    },
+    "parameters": {
+      "timeframes": ["1H", "15M", "5M", "2M"],
+      "indicators": [
+        {"name": "EMA", "params": {"length": 9}},
+        {"name": "EMA", "params": {"length": 20}},
+        {"name": "EMA", "params": {"length": 72}},
+        {"name": "EMA", "params": {"length": 89}},
+        {"name": "VWAP", "params": {}},
+        {"name": "DeviationBands", "params": {"source_ema": 20, "length": 20, "multiplier": 2.0}}
+      ]
+    }
+  }
+}

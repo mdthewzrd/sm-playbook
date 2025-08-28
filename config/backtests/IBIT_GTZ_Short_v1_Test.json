@@ -1,0 +1,36 @@
+{
+    "backtest_configuration": {
+      "run_name": "IBIT_GTZ_Short_v1_Verification_Test",
+      "strategy_id": "IBIT_GTZ_EMA_Reversion_Short_v1",
+      "simulation_environment": {
+        "symbol": "IBIT",
+        "start_date": "2025-08-13",
+        "end_date": "2025-08-27",
+        "transaction_costs": {
+          "commission": 0.00,
+          "slippage_model": "volume_participation",
+          "slippage_percent": 0.02
+        }
+      },
+      "risk_parameters": {
+        "initial_capital": 100000,
+        "max_portfolio_risk": 0.05,
+        "max_position_risk": 0.02
+      },
+      "output_requirements": {
+        "performance_report": true,
+        "trade_log": true,
+        "visualizations": {
+          "generate_charts": true,
+          "chart_timeframe": "5M",
+          "overlays": ["EMA(9)", "EMA(20)", "VWAP"],
+          "execution_markers": {
+            "entries": true,
+            "pyramids": true,
+            "exits": true,
+            "stop_loss_levels": true
+          }
+        }
+      }
+    }
+  }

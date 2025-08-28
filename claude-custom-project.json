@@ -1,0 +1,231 @@
+{
+  "name": "SM Playbook Trading System",
+  "description": "Comprehensive algorithmic trading system based on the Lingua trading language, featuring systematic strategies, custom indicators, and complete backtesting framework",
+  "version": "1.0.0",
+  "created": "2025-08-28",
+  "knowledge_base": {
+    "primary_document": "claude-custom-project-knowledge-base.md",
+    "core_concepts": [
+      "Lingua Trading Language",
+      "8-Stage Trend Cycle",
+      "Fractal Market Analysis", 
+      "HTF/MTF/LTF Timeframe Hierarchy",
+      "OS D1 Strategy",
+      "Euphoric Top Fades",
+      "Backside Reversion and Fade",
+      "Custom EMA Cloud System",
+      "Deviation Band Indicators",
+      "Risk Management Framework"
+    ],
+    "key_files": [
+      "docs/knowledge/core/lingua_trading_language_complete.md",
+      "docs/knowledge/strategies/os_d1_small_cap_day_one_setup.md",
+      "docs/knowledge/technical/custom_indicators.md",
+      "docs/knowledge/bmad_knowledge_pack.md",
+      "README.md",
+      "backside_reversion_and_fade.md"
+    ],
+    "code_repositories": [
+      "trading-code/backtesting/",
+      "trading-code/indicators/",
+      "trading-code/scanners/",
+      "trading-code/execution/",
+      "mcp-integration/"
+    ],
+    "visual_documentation": "docs/knowledge/images/",
+    "performance_data": [
+      "backtest-results/",
+      "reports/",
+      "trading-journal/"
+    ]
+  },
+  "capabilities": [
+    {
+      "category": "Strategy Development",
+      "skills": [
+        "Create new systematic trading strategies based on Lingua framework",
+        "Optimize existing strategy parameters using walk-forward analysis",
+        "Implement fractal analysis across multiple timeframes",
+        "Design custom indicators for pattern recognition",
+        "Validate strategies through comprehensive backtesting"
+      ]
+    },
+    {
+      "category": "Technical Analysis",
+      "skills": [
+        "Apply Lingua 8-stage trend cycle analysis",
+        "Calculate custom EMA cloud systems (72/89 and 9/20)",
+        "Generate deviation bands for extreme identification",
+        "Implement trail systems for trend confirmation",
+        "Analyze market structure and context classification"
+      ]
+    },
+    {
+      "category": "Risk Management",
+      "skills": [
+        "Calculate optimal position sizing using volatility-based methods",
+        "Monitor real-time portfolio risk across multiple positions",
+        "Implement stop-loss and target level management",
+        "Apply portfolio-level risk controls (max 8% total risk)",
+        "Execute emergency risk reduction procedures"
+      ]
+    },
+    {
+      "category": "Backtesting & Analysis",
+      "skills": [
+        "Run comprehensive historical strategy validation",
+        "Calculate performance metrics (Sharpe, Calmar, Sortino ratios)",
+        "Analyze win rates, profit factors, and drawdown metrics",
+        "Generate detailed performance reports with visual charts",
+        "Perform walk-forward optimization and parameter testing"
+      ]
+    },
+    {
+      "category": "Market Scanning",
+      "skills": [
+        "Implement OS D1 small cap scanner for daily opportunities",
+        "Identify euphoric top candidates for short setups",
+        "Scan for backside reversion and fade opportunities",
+        "Filter candidates by market cap, volume, and technical criteria",
+        "Real-time market data processing and alert generation"
+      ]
+    },
+    {
+      "category": "Code Development",
+      "skills": [
+        "Python trading system implementation",
+        "TypeScript MCP architecture development",
+        "API integration (Polygon.io, TA-Lib, backtesting.py)",
+        "Database design for market data and trade history",
+        "Performance optimization and system scalability"
+      ]
+    }
+  ],
+  "trading_strategies": {
+    "OS_D1": {
+      "name": "Opening Strength Day One",
+      "type": "Long momentum strategy",
+      "win_rate": "72.3%",
+      "context": "Small cap stocks on day one of significant moves",
+      "timeframe": "Intraday (2min-15min execution)",
+      "risk_reward": "1:2.1 average",
+      "max_risk": "2% per position"
+    },
+    "Euphoric_Top_Fade": {
+      "name": "Euphoric Top Fade",
+      "type": "Short reversal strategy", 
+      "win_rate": "67.8%",
+      "context": "Parabolic extensions beyond trend channels",
+      "timeframe": "Intraday to swing (5min-4hr)",
+      "risk_reward": "1:2.5 average",
+      "max_risk": "2% per position"
+    },
+    "BRF": {
+      "name": "Backside Reversion and Fade",
+      "type": "Short failed breakout strategy",
+      "win_rate": "65.4%",
+      "context": "Failed attempts to reclaim previous highs",
+      "timeframe": "Swing trading (15min-daily)",
+      "risk_reward": "1:2.2 average",
+      "max_risk": "1.5% per position"
+    }
+  },
+  "indicators": {
+    "EMA_Cloud_Primary": {
+      "periods": [72, 89],
+      "usage": "HTF trend identification and major S/R levels",
+      "visualization": "Cloud display with trend coloring"
+    },
+    "EMA_Cloud_Execution": {
+      "periods": [9, 20],
+      "usage": "LTF entries and momentum confirmation",
+      "visualization": "Tighter cloud for precise timing"
+    },
+    "Deviation_Bands_Main": {
+      "basis": "72/89 EMA midpoint",
+      "multipliers": [2.0, 2.5],
+      "usage": "Setup identification and major reversal zones"
+    },
+    "Deviation_Bands_Exec": {
+      "basis": "9/20 EMA midpoint",
+      "multipliers": [1.5, 2.0],
+      "usage": "Precise entry/exit timing"
+    },
+    "Trail_System": {
+      "basis": "9/20 EMA cloud",
+      "usage": "Trend confirmation and exit signals",
+      "rule": "Exit on 2 consecutive closes outside cloud"
+    }
+  },
+  "risk_parameters": {
+    "max_position_risk": 0.02,
+    "max_portfolio_risk": 0.08,
+    "max_daily_loss": 5000,
+    "position_sizing_method": "volatility_based",
+    "stop_loss_required": true,
+    "emergency_stop_enabled": true
+  },
+  "data_sources": {
+    "real_time": "Polygon.io API",
+    "historical": "Polygon.io historical data",
+    "technical_analysis": "TA-Lib calculations",
+    "backtesting": "backtesting.py engine",
+    "execution": "OsEngine platform",
+    "documentation": "Notion integration"
+  },
+  "performance_tracking": {
+    "metrics": [
+      "Win Rate",
+      "Average Winner/Loser",
+      "Profit Factor", 
+      "Sharpe Ratio",
+      "Maximum Drawdown",
+      "Calmar Ratio",
+      "Sortino Ratio"
+    ],
+    "reporting_frequency": "Real-time monitoring, daily summaries",
+    "benchmarks": "SPY, QQQ, Russell 2000 comparison"
+  },
+  "compliance": {
+    "risk_warnings": "Trading involves substantial risk of loss",
+    "testing_required": "All strategies must pass paper trading validation",
+    "capital_requirements": "Only risk capital you can afford to lose",
+    "regulatory_compliance": "Follow applicable securities regulations"
+  },
+  "system_architecture": {
+    "framework": "MCP (Model-Controller-Processor)",
+    "languages": ["Python 3.9+", "TypeScript/Node.js"],
+    "databases": ["Market data storage", "Trade history tracking"],
+    "apis": ["REST APIs for data feeds", "WebSocket for real-time updates"],
+    "deployment": "Local development, cloud production options"
+  },
+  "learning_resources": {
+    "getting_started": "README.md comprehensive guide",
+    "strategy_details": "docs/knowledge/strategies/",
+    "visual_examples": "docs/knowledge/images/ (64 annotated charts)",
+    "code_examples": "trading-code/ directory structure",
+    "performance_data": "reports/ and backtest-results/ directories"
+  },
+  "development_workflow": {
+    "strategy_creation": [
+      "1. Define concept in Lingua framework",
+      "2. Validate through backtesting",
+      "3. Implement in MCP architecture", 
+      "4. Paper trade validation",
+      "5. Live deployment with risk controls"
+    ],
+    "optimization_process": [
+      "1. Walk-forward parameter testing",
+      "2. Out-of-sample validation",
+      "3. Risk-adjusted performance evaluation",
+      "4. Implementation and monitoring"
+    ]
+  },
+  "support_context": {
+    "expertise_level": "Advanced systematic trading",
+    "code_complexity": "Production-grade trading systems",
+    "data_volume": "Real-time market data processing",
+    "performance_requirements": "<50ms execution latency",
+    "reliability_standards": ">99.5% uptime during trading hours"
+  }
+}

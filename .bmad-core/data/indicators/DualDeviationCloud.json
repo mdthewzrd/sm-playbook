@@ -1,0 +1,51 @@
+{
+    "custom_indicators": {
+      "dual_deviation_cloud": {
+        "name": "DualDeviationCloud",
+        "description": "A cloud formed between a fast and slow EMA, with two upper and two lower deviation bands calculated from the cloud. The multipliers for each band are independently configurable.",
+        "formula": {
+          "fast_ema": "ta.ema(close, ema_fast_length)",
+          "slow_ema": "ta.ema(close, ema_slow_length)",
+          "cloud_upper_boundary": "max(fast_ema, slow_ema)",
+          "cloud_lower_boundary": "min(fast_ema, slow_ema)",
+          "upper_band_1": "cloud_upper_boundary + (StdDev(close, ema_slow_length) * positive_dev_1)",
+          "upper_band_2": "cloud_upper_boundary + (StdDev(close, ema_slow_length) * positive_dev_2)",
+          "lower_band_1": "cloud_lower_boundary - (StdDev(close, ema_slow_length) * negative_dev_1)",
+          "lower_band_2": "cloud_lower_boundary - (StdDev(close, ema_slow_length) * negative_dev_2)"
+        },
+        "parameters": {
+          "ema_fast_length": {
+            "type": "integer",
+            "default": 9,
+            "description": "Length for the fast EMA."
+          },
+          "ema_slow_length": {
+            "type": "integer",
+            "default": 20,
+            "description": "Length for the slow EMA and the StdDev calculation."
+          },
+          "positive_dev_1": {
+            "type": "float",
+            "default": 1.0,
+            "description": "First Positive Deviation Multiplier."
+          },
+          "positive_dev_2": {
+            "type": "float",
+            "default": 0.5,
+            "description": "Second Positive Deviation Multiplier."
+          },
+          "negative_dev_1": {
+            "type": "float",
+            "default": 2.0,
+            "description": "First Negative Deviation Multiplier (Primary Target)."
+          },
+          "negative_dev_2": {
+            "type": "float",
+            "default": 2.4,
+            "description": "Second Negative Deviation Multiplier."
+          }
+        },
+        "implementation_notes": "The strategy primarily uses 'lower_band_1' as its profit target. All bands should be calculated for all required timeframes (1H, 15M, 5M, 2M)."
+      }
+    }
+  }
