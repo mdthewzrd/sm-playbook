@@ -1,0 +1,5 @@
+symbol,date,trend_atr,gap_atr,extension_atr,range_close_pct,volume_multiple,change_atr,fade_atr,days_since_high,trend_start,euphoric_high,fade_type,consecutive_reds,outlier_volume,outlier_range_atr,dev_band_upper_05,d0_open,d0_high,ema_extension_pct,vol_quality_score,d_minus_1_avg_dollar_vol_20d,trend_duration_days,scanner_version,setup_grade
+PLTR,2024-08-06,6.67,2.84,5.59,89.7,1.91,0.63,5.58,18,2024-06-05,2024-07-18,multiple_red,5,1.12,2.11,27.1,27.05,27.42,10.5,2.29,1256.7,43,V11_Enhanced,B+
+META,2024-08-01,5.34,3.71,4.36,82.9,1.59,0.95,5.56,23,2024-06-03,2024-07-08,multiple_red,3,1.32,2.32,487.19,521.0,527.17,8.6,1.59,7469.1,35,V11_Enhanced,B+
+META,2024-08-01,5.34,3.71,4.36,82.9,1.59,0.95,5.56,23,2024-06-03,2024-07-08,multiple_red,3,1.32,2.32,487.19,521.0,527.17,8.6,1.59,7469.1,35,V11_Enhanced,B+
+META,2024-08-01,5.34,3.71,4.36,82.9,1.59,0.95,5.56,23,2024-06-03,2024-07-08,multiple_red,3,1.32,2.32,487.19,521.0,527.17,8.6,1.59,7469.1,35,V11_Enhanced,B+

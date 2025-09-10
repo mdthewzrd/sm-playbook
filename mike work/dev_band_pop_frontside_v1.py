@@ -1,0 +1,337 @@
+"""
+Dev Band Pop Frontside Scanner V1
+Simple scanner for names that are consolidating/starting to downtrend and popping into 0.4 upper dev bands
+This is the "frontside" version - catching names before they become true backside setups
+"""
+
+import pandas as pd
+import numpy as np
+import requests
+import time
+from datetime import timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import warnings
+warnings.filterwarnings("ignore")
+
+# CONFIGURATION
+API_KEY = "Fm7brz4s23eSocDErnL68cE7wspz2K1I"
+BASE_URL = "https://api.polygon.io"
+
+# DATE RANGE AND TICKERS
+START_DATE = "2024-01-01"
+END_DATE = "2025-09-01"
+MAX_WORKERS = 16
+
+TICKER_UNIVERSE = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'AMD', 'CRM', 'ADBE', 'PYPL', 'INTC', 'CSCO', 'PEP', 'AVGO', 'CMCSA', 'TXN', 'QCOM', 'COST', 'TMUS', 'HON', 'UNP', 'SBUX', 'AMAT', 'INTU', 'BKNG', 'ISRG', 'ADP', 'GILD', 'AMT', 'MU', 'VRTX', 'LRCX', 'FISV', 'CSX', 'ADI', 'REGN', 'ATVI', 'MDLZ', 'KLAC', 'ORLY', 'SNPS', 'CDNS', 'MAR', 'MRVL', 'FTNT', 'ASML', 'CRWD', 'ADSK', 'NXPI', 'WDAY', 'ABNB', 'TEAM', 'DXCM', 'MELI', 'KHC', 'EXC', 'CSGP', 'FANG', 'CHTR', 'PANW', 'AEP', 'KDP', 'PAYX', 'ROST', 'ODFL', 'FAST', 'VRSK', 'CTSH', 'BKR', 'EA', 'DDOG', 'CPRT', 'PCAR', 'XEL', 'EBAY', 'GEHC', 'MNST', 'MRNA', 'AZN', 'COIN']
+
+class DevBandPopFrontsideV1:
+    """Simple scanner for consolidating/downtrending names popping into 0.4 upper dev bands"""
+    
+    def __init__(self, polygon_api_key=None):
+        self.api_key = polygon_api_key or API_KEY
+        self.base_url = BASE_URL
+        self.ticker_universe = TICKER_UNIVERSE
+        self.max_workers = MAX_WORKERS
+        
+        # Simple scan criteria
+        self.scan_thresholds = {
+            # Basic filters
+            'min_price': 10.0,
+            'max_price': 1000.0,
+            'min_volume': 10_000_000,
+            'min_dollar_volume_20d': 20_000_000,  # Liquidity filter
+            
+            # Volume and gap criteria
+            'min_volume_multiple': 1.2,      # Simple volume requirement
+            'min_gap_atr': 0.3,              # Simple gap requirement
+            
+            # Dev band criteria - 0.4 multiplier for sensitivity
+            'dev_band_multiplier': 0.4,
+            
+            # Frontside criteria - consolidating or starting downtrend
+            'lookback_days': 20,             # Look back for trend context
+            'max_ema_slope': 4.0,            # EMA 20 should be flat or declining (frontside)
+            'consolidation_range_pct': 15.0, # Price should be in a range (not strong uptrend)
+        }
+        
+        # Session for connection pooling
+        self.session = requests.Session()
+        self.session.headers.update({'User-Agent': 'dev-band-pop-frontside-v1'})
+
+    def fetch_daily_data_cached(self, symbol, start_date, end_date):
+        """Fetch daily OHLCV data from Polygon"""
+        url = f"{self.base_url}/v2/aggs/ticker/{symbol}/range/1/day/{start_date}/{end_date}"
+        params = {'adjusted': 'true', 'sort': 'asc', 'apikey': self.api_key}
+        
+        try:
+            time.sleep(0.012)  # Rate limiting
+            response = self.session.get(url, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if 'results' in data and data['results']:
+                    df = pd.DataFrame(data['results'])
+                    df['date'] = pd.to_datetime(df['t'], unit='ms').dt.date
+                    df = df.rename(columns={'o': 'open', 'h': 'high', 'l': 'low', 'c': 'close', 'v': 'volume'})
+                    return df[['date', 'open', 'high', 'low', 'close', 'volume']]
+            return pd.DataFrame()
+        except Exception:
+            return pd.DataFrame()
+
+    def calculate_simple_indicators(self, df):
+        """Calculate simple indicators for dev band analysis"""
+        if df.empty or len(df) < 10:
+            return df
+            
+        df = df.copy().sort_values('date').reset_index(drop=True)
+        
+        # Basic calculations
+        df['pdc'] = df['close'].shift(1)
+        df['true_range'] = np.maximum.reduce([
+            df['high'] - df['low'],
+            np.abs(df['high'] - df['pdc']),
+            np.abs(df['low'] - df['pdc'])
+        ])
+        
+        # Simple ATR
+        df['atr'] = df['true_range'].rolling(14, min_periods=5).mean()
+        
+        # EMAs for trend context
+        df['ema_9'] = df['close'].ewm(span=9, min_periods=5).mean()
+        df['ema_20'] = df['close'].ewm(span=20, min_periods=10).mean()
+        
+        # EMA slope calculation (change over 5 days)
+        df['ema_20_5d_ago'] = df['ema_20'].shift(5)
+        df['ema_20_slope'] = (df['ema_20'] - df['ema_20_5d_ago']) / df['ema_20_5d_ago'] * 100
+        
+        # Rolling high/low for consolidation detection
+        df['rolling_high_20'] = df['high'].rolling(20, min_periods=10).max()
+        df['rolling_low_20'] = df['low'].rolling(20, min_periods=10).min()
+        df['consolidation_range_pct'] = ((df['rolling_high_20'] - df['rolling_low_20']) / df['rolling_low_20']) * 100
+        
+        # Simple gap and volume calculations
+        df['gap_dollars'] = df['open'] - df['pdc']
+        df['gap_atr'] = df['gap_dollars'] / df['atr']
+        df['avg_volume_20'] = df['volume'].rolling(20, min_periods=5).mean()
+        df['volume_multiple'] = df['volume'] / df['avg_volume_20']
+        
+        # Dollar volume for liquidity
+        df['dollar_volume'] = df['close'] * df['volume']
+        df['avg_dollar_volume_20d'] = df['dollar_volume'].rolling(20, min_periods=5).mean()
+        
+        # Dev band calculation with 0.4 multiplier
+        df['ATR_9'] = df['true_range'].rolling(9, min_periods=3).mean()
+        df['dev_band_upper_04'] = df['ema_9'] + self.scan_thresholds['dev_band_multiplier'] * df['ATR_9']
+        
+        # Track position relative to dev band
+        df['open_above_dev_04'] = df['open'] > df['dev_band_upper_04']
+        df['high_above_dev_04'] = df['high'] > df['dev_band_upper_04']
+        
+        return df
+
+    def check_frontside_context(self, df, setup_idx):
+        """Check if stock is consolidating or starting to downtrend (frontside)"""
+        if setup_idx < self.scan_thresholds['lookback_days']:
+            return False, "insufficient_data"
+        
+        current_row = df.iloc[setup_idx]
+        
+        # Check EMA 20 slope - should be flat or declining
+        ema_20_slope = current_row['ema_20_slope'] if not pd.isna(current_row['ema_20_slope']) else 0
+        if ema_20_slope > self.scan_thresholds['max_ema_slope']:
+            return False, "strong_uptrend"  # Too strong uptrend
+        
+        # Check consolidation range - should be in a reasonable range (not explosive uptrend)
+        consolidation_range = current_row['consolidation_range_pct'] if not pd.isna(current_row['consolidation_range_pct']) else 0
+        if consolidation_range > self.scan_thresholds['consolidation_range_pct']:
+            return False, "too_volatile"  # Too wide range, likely strong trend
+        
+        # Determine context type
+        if ema_20_slope <= -0.1:
+            context_type = "downtrend"
+        elif -0.1 < ema_20_slope <= 0.1:
+            context_type = "consolidation"
+        else:
+            context_type = "weak_uptrend"
+        
+        return True, context_type
+
+    def scan_single_ticker(self, symbol, start_date, end_date):
+        """Scan single ticker for dev band pop setups"""
+        # Fetch data with extended lookback
+        extended_start = (pd.to_datetime(start_date) - timedelta(days=100)).strftime('%Y-%m-%d')
+        df = self.fetch_daily_data_cached(symbol, extended_start, end_date)
+        
+        if df.empty or len(df) < 30:
+            return []
+        
+        # Calculate indicators
+        df = self.calculate_simple_indicators(df)
+        
+        # Find setups in date range
+        target_start = pd.to_datetime(start_date).date()
+        target_end = pd.to_datetime(end_date).date()
+        setups = []
+        
+        for idx in range(1, len(df)):
+            current_date = df.iloc[idx]['date']
+            if not (target_start <= current_date <= target_end):
+                continue
+                
+            prev_idx = idx - 1
+            d_minus_1 = df.iloc[prev_idx]
+            d_0 = df.iloc[idx]
+            
+            # SIMPLE FILTERS
+            
+            # 1. Basic price and volume filters
+            if not (self.scan_thresholds['min_price'] <= d_0['close'] <= self.scan_thresholds['max_price']):
+                continue
+            if d_minus_1['volume'] < self.scan_thresholds['min_volume']:
+                continue
+            if pd.isna(d_minus_1['atr']) or d_minus_1['atr'] <= 0:
+                continue
+            
+            # 2. Dollar volume liquidity filter
+            d_minus_1_dollar_vol = d_minus_1['avg_dollar_volume_20d'] if not pd.isna(d_minus_1['avg_dollar_volume_20d']) else 0
+            if d_minus_1_dollar_vol < self.scan_thresholds['min_dollar_volume_20d']:
+                continue
+            
+            # 3. Volume multiple requirement
+            volume_multiple = d_minus_1['volume_multiple'] if not pd.isna(d_minus_1['volume_multiple']) else 0
+            if volume_multiple < self.scan_thresholds['min_volume_multiple']:
+                continue
+            
+            # 4. Gap requirement
+            gap_atr = d_0['gap_atr'] if not pd.isna(d_0['gap_atr']) else 0
+            if gap_atr < self.scan_thresholds['min_gap_atr']:
+                continue
+            
+            # 5. Must be popping into 0.4 dev band
+            d0_open_above_dev = d_0['open_above_dev_04'] if not pd.isna(d_0['open_above_dev_04']) else False
+            d0_high_above_dev = d_0['high_above_dev_04'] if not pd.isna(d_0['high_above_dev_04']) else False
+            
+            if not (d0_open_above_dev or d0_high_above_dev):
+                continue
+            
+            # 6. Check frontside context - consolidating or starting to downtrend
+            is_frontside, context_type = self.check_frontside_context(df, idx)
+            if not is_frontside:
+                continue
+            
+            # Calculate setup metrics
+            dev_band_value = d_0['dev_band_upper_04'] if not pd.isna(d_0['dev_band_upper_04']) else 0
+            ema_9_value = d_0['ema_9'] if not pd.isna(d_0['ema_9']) else 0
+            ema_20_value = d_0['ema_20'] if not pd.isna(d_0['ema_20']) else 0
+            ema_20_slope = d_0['ema_20_slope'] if not pd.isna(d_0['ema_20_slope']) else 0
+            consolidation_range = d_0['consolidation_range_pct'] if not pd.isna(d_0['consolidation_range_pct']) else 0
+            
+            # EMA relationship
+            ema_relationship = "9>20" if ema_9_value > ema_20_value else "20>9" if ema_20_value > ema_9_value else "equal"
+            
+            setup = {
+                'symbol': symbol,
+                'date': current_date.strftime('%Y-%m-%d'),
+                'gap_atr': round(gap_atr, 2),
+                'volume_multiple': round(volume_multiple, 2),
+                'd0_open': round(d_0['open'], 2),
+                'd0_high': round(d_0['high'], 2),
+                'd0_close': round(d_0['close'], 2),
+                'dev_band_04': round(dev_band_value, 2),
+                'ema_9': round(ema_9_value, 2),
+                'ema_20': round(ema_20_value, 2),
+                'ema_20_slope': round(ema_20_slope, 2),
+                'ema_relationship': ema_relationship,
+                'context_type': context_type,
+                'consolidation_range_pct': round(consolidation_range, 1),
+                'dollar_volume_20d_m': round(d_minus_1_dollar_vol / 1_000_000, 1) if d_minus_1_dollar_vol > 0 else None,
+                'scanner_version': 'DevBandPopFrontsideV1'
+            }
+            setups.append(setup)
+        
+        return setups
+
+    def run_scan(self, start_date=None, end_date=None, tickers=None):
+        """Run dev band pop frontside scan"""
+        start_date = start_date or START_DATE
+        end_date = end_date or END_DATE
+        tickers = tickers or self.ticker_universe
+        
+        print(f"🚀 DEV BAND POP FRONTSIDE SCANNER V1")
+        print(f"📅 Scanning {len(tickers)} tickers from {start_date} to {end_date}")
+        print(f"🔧 Features:")
+        print(f"   • Simple scan for consolidating/downtrending names popping into 0.{int(self.scan_thresholds['dev_band_multiplier']*10)} upper dev bands")
+        print(f"   • EMA 20 slope ≤{self.scan_thresholds['max_ema_slope']:.1f}% (flat/declining)")
+        print(f"   • 20-day range ≤{self.scan_thresholds['consolidation_range_pct']:.1f}% (not explosive)")
+        print(f"   • Volume {self.scan_thresholds['min_volume_multiple']}x+ and gap {self.scan_thresholds['min_gap_atr']}+ ATR")
+        print(f"   • ${self.scan_thresholds['min_dollar_volume_20d']/1_000_000:.0f}M minimum dollar volume")
+        print("=" * 80)
+        
+        all_setups = []
+        processed = 0
+        errors = 0
+        
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            future_to_ticker = {
+                executor.submit(self.scan_single_ticker, ticker, start_date, end_date): ticker 
+                for ticker in tickers
+            }
+            
+            for future in as_completed(future_to_ticker):
+                ticker = future_to_ticker[future]
+                try:
+                    setups = future.result()
+                    if setups:
+                        all_setups.extend(setups)
+                        print(f"✅ {ticker}: {len(setups)} frontside dev band pop setups found")
+                    else:
+                        print(f"⚪ {ticker}: No setups")
+                except Exception as e:
+                    print(f"❌ {ticker}: Error - {str(e)[:50]}")
+                    errors += 1
+                
+                processed += 1
+                if processed % 20 == 0:
+                    print(f"📊 Progress: {processed}/{len(tickers)} ({processed/len(tickers)*100:.1f}%)")
+        
+        print("\n" + "=" * 80)
+        print(f"🎯 DEV BAND POP FRONTSIDE SCAN COMPLETE")
+        print(f"📊 Results: {len(all_setups)} setups found")
+        print(f"⚠️  Errors: {errors} tickers failed")
+        
+        if all_setups:
+            df_results = pd.DataFrame(all_setups)
+            df_results = df_results.sort_values(['date', 'gap_atr'], ascending=[False, False])
+            
+            print(f"\n🏆 ALL DEV BAND POP FRONTSIDE SETUPS:")
+            display_cols = ['symbol', 'date', 'gap_atr', 'volume_multiple', 'd0_open', 'dev_band_04', 'context_type', 'ema_20_slope']
+            print(df_results[display_cols].to_string(index=False))
+            
+            # Context type breakdown
+            context_counts = df_results['context_type'].value_counts()
+            print(f"\n📊 CONTEXT TYPE BREAKDOWN:")
+            for context, count in context_counts.items():
+                print(f"   {context}: {count} setups")
+            
+            # EMA relationship breakdown
+            ema_counts = df_results['ema_relationship'].value_counts()
+            print(f"\n📊 EMA RELATIONSHIP BREAKDOWN:")
+            for ema_rel, count in ema_counts.items():
+                print(f"   {ema_rel}: {count} setups")
+            
+            return df_results
+        else:
+            print("No dev band pop frontside setups found.")
+            return pd.DataFrame()
+
+# Example Usage
+if __name__ == "__main__":
+    # Initialize scanner
+    scanner = DevBandPopFrontsideV1()
+    
+    # Run scan
+    results = scanner.run_scan()
+    
+    if not results.empty:
+        # Save results to CSV
+        results.to_csv('dev_band_pop_frontside_v1_results.csv', index=False)
+        print(f"\n💾 Results saved to: dev_band_pop_frontside_v1_results.csv")

@@ -1,0 +1,122 @@
+🚀 BACKSIDE POP SCANNER V10 - FADE PATTERN ANALYSIS
+📅 Scanning 82 tickers from 2022-01-01 to 2025-09-01
+🔧 V10 Enhancements:
+   • Removed daily trigger requirement
+   • Added multiple red days detection (2+ consecutive)
+   • Added outlier fade day detection (volume 2x + range 2+ ATR)
+   • Enhanced fade pattern analysis for better setup identification
+================================================================================
+⚪ ADBE: No setups
+⚪ NFLX: No setups
+⚪ PEP: No setups
+⚪ CRM: No setups
+⚪ TXN: No setups
+⚪ COST: No setups
+⚪ HON: No setups
+⚪ TMUS: No setups
+⚪ UNP: No setups
+⚪ AMAT: No setups
+⚪ INTU: No setups
+⚪ BKNG: No setups
+⚪ ISRG: No setups
+⚪ ADP: No setups
+⚪ QCOM: No setups
+⚪ AMT: No setups
+⚪ SBUX: No setups
+⚪ GILD: No setups
+⚪ VRTX: No setups
+⚪ FISV: No setups
+📊 Progress: 20/82 (24.4%)
+⚪ PYPL: No setups
+⚪ ADI: No setups
+⚪ REGN: No setups
+✅ META: 3 setups found
+⚪ ATVI: No setups
+⚪ KLAC: No setups
+⚪ ORLY: No setups
+⚪ SNPS: No setups
+⚪ CDNS: No setups
+⚪ MAR: No setups
+⚪ MDLZ: No setups
+⚪ FTNT: No setups
+⚪ ASML: No setups
+⚪ CRWD: No setups
+⚪ ADSK: No setups
+⚪ NXPI: No setups
+⚪ WDAY: No setups
+✅ TSLA: 3 setups found
+⚪ TEAM: No setups
+⚪ DXCM: No setups
+📊 Progress: 40/82 (48.8%)
+⚪ MELI: No setups
+⚪ INTC: No setups
+✅ AMD: 2 setups found
+⚪ ABNB: No setups
+⚪ LRCX: No setups
+⚪ CSGP: No setups
+⚪ FANG: No setups
+⚪ CHTR: No setups
+⚪ AEP: No setups
+⚪ PAYX: No setups
+⚪ ROST: No setups
+⚪ CMCSA: No setups
+⚪ ODFL: No setups
+⚪ AMZN: No setups
+⚪ VRSK: No setups
+⚪ MSFT: No setups
+⚪ EA: No setups
+⚪ CTSH: No setups
+⚪ CPRT: No setups
+⚪ CSCO: No setups
+📊 Progress: 60/82 (73.2%)
+✅ AVGO: 3 setups found
+⚪ AAPL: No setups
+⚪ DDOG: No setups
+⚪ EXC: No setups
+⚪ PCAR: No setups
+⚪ GEHC: No setups
+⚪ XEL: No setups
+⚪ MNST: No setups
+⚪ FAST: No setups
+⚪ AZN: No setups
+⚪ GOOGL: No setups
+✅ NVDA: 1 setups found
+⚪ EBAY: No setups
+⚪ BKR: No setups
+⚪ KHC: No setups
+⚪ PANW: No setups
+⚪ MRNA: No setups
+✅ MU: 1 setups found
+✅ MRVL: 1 setups found
+⚪ CSX: No setups
+📊 Progress: 80/82 (97.6%)
+⚪ KDP: No setups
+⚪ COIN: No setups
+
+================================================================================
+🎯 V10 SCAN COMPLETE
+📊 Results: 14 setups found
+⚠️  Errors: 0 tickers failed
+
+🏆 ALL V10 SETUPS:
+symbol       date  trend_atr  gap_atr  extension_atr    fade_type  consecutive_reds
+  TSLA 2025-01-14      16.97     0.85           2.63 multiple_red                 5
+  AVGO 2024-12-24      11.11     1.19           2.30 multiple_red                 3
+  TSLA 2024-11-18       8.69     1.92           3.03 multiple_red                 3
+  TSLA 2024-07-15       9.88     0.86           2.54 outlier_fade                 0
+  AVGO 2024-07-05      13.96     0.69           2.40 multiple_red                 7
+    MU 2024-05-03      15.13     0.99           2.05 multiple_red                 4
+  META 2024-04-24      18.68     1.13           1.80 multiple_red                 2
+  NVDA 2024-03-21      25.90     1.00           2.12 multiple_red                 2
+  AVGO 2024-03-21      14.66     1.84           3.58 multiple_red                 5
+   AMD 2024-02-02      15.38     0.70           1.67 multiple_red                 2
+   AMD 2023-06-09       9.59     0.67           1.74 multiple_red                 2
+  MRVL 2023-06-02      12.53     0.52           1.67 multiple_red                 6
+  META 2022-06-27       7.62     0.57           4.92 multiple_red                 4
+  META 2022-06-24       7.85     1.47           3.69 multiple_red                 4
+
+📊 FADE PATTERN BREAKDOWN:
+   multiple_red: 13 setups
+   outlier_fade: 1 setups
+
+💾 Results saved to: backside_pop_v10_results.csv
