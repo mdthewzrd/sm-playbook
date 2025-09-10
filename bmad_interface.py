@@ -574,3 +574,158 @@ if __name__ == '__main__':
     except Exception as e:
         logger.error(f"Fatal error in BMad interface: {e}")
         sys.exit(1)
+
+
+# =============================================================================
+# SM PLAYBOOK AGENT INTEGRATION
+# =============================================================================
+
+# Import the Claude Code integration
+try:
+    from claude_code_integration import (
+        init_sm_playbook_system, os_d1_scan, backtest_strategy, 
+        analyze_lingua, design_strategy, system_status, AGENTS_AVAILABLE
+    )
+    AGENT_INTEGRATION = True
+except ImportError as e:
+    print(f"⚠️  Agent integration not available: {e}")
+    AGENT_INTEGRATION = False
+
+class EnhancedBMadInterface(BMadInterface):
+    """Enhanced BMad interface with agent system integration."""
+    
+    def __init__(self):
+        super().__init__()
+        self.agent_system_ready = False
+    
+    async def initialize_agent_system(self):
+        """Initialize the agent system."""
+        if not AGENT_INTEGRATION:
+            print("❌ Agent system not available")
+            return False
+        
+        print("🎭 Initializing SM Playbook Agent System...")
+        self.agent_system_ready = await init_sm_playbook_system()
+        return self.agent_system_ready
+    
+    def _process_command(self, user_input: str):
+        """Override to process commands with agent system integration."""
+        command_parts = user_input.lower().strip().split()
+        
+        if not command_parts:
+            return
+        
+        main_command = command_parts[0]
+        args = command_parts[1:]
+        
+        # Agent system commands
+        if main_command == "*init-agents":
+            if AGENT_INTEGRATION:
+                import asyncio
+                result = asyncio.run(self.initialize_agent_system())
+                if result:
+                    print("✅ Agent system initialized successfully!")
+                else:
+                    print("❌ Agent system initialization failed")
+            else:
+                print("❌ Agent system not available")
+        
+        elif main_command == "*os-d1":
+            if not self.agent_system_ready:
+                print("❌ Agent system not ready. Run *init-agents first")
+                return
+            
+            if args and args[0] == "scan":
+                date = args[1] if len(args) > 1 else None
+                print("🔍 Running OS D1 scanner...")
+                results = os_d1_scan(date)
+                print(f"Scan completed: {results}")
+            else:
+                print("Usage: *os-d1 scan [date]")
+        
+        elif main_command == "*backtest":
+            if not self.agent_system_ready:
+                print("❌ Agent system not ready. Run *init-agents first")
+                return
+            
+            if len(args) >= 1:
+                strategy_name = args[0]
+                symbol = args[1] if len(args) > 1 else "AAPL"
+                print(f"📈 Running backtest for {strategy_name} on {symbol}...")
+                results = backtest_strategy(strategy_name, symbol)
+                print(f"Backtest completed: {results}")
+            else:
+                print("Usage: *backtest [strategy_name] [symbol]")
+        
+        elif main_command == "*analyze":
+            if not self.agent_system_ready:
+                print("❌ Agent system not ready. Run *init-agents first")
+                return
+            
+            if len(args) >= 1:
+                symbol = args[0].upper()
+                timeframe = args[1] if len(args) > 1 else "daily"
+                print(f"📊 Analyzing {symbol} using Lingua framework...")
+                results = analyze_lingua(symbol, timeframe)
+                print(f"Analysis completed: {results}")
+            else:
+                print("Usage: *analyze [symbol] [timeframe]")
+        
+        elif main_command == "*design":
+            if not self.agent_system_ready:
+                print("❌ Agent system not ready. Run *init-agents first")
+                return
+            
+            strategy_type = args[0] if args else "os_d1"
+            print(f"🎨 Designing {strategy_type} strategy...")
+            results = design_strategy(strategy_type)
+            print(f"Strategy design completed: {results}")
+        
+        elif main_command == "*agent-status":
+            if AGENT_INTEGRATION:
+                status = system_status()
+                print(f"🤖 Agent System Status:")
+                print(f"  Status: {status.get('factory_status', 'unknown')}")
+                print(f"  Total Agents: {status.get('total_agents', 0)}")
+                if 'agents' in status:
+                    print("  Active Agents:")
+                    for agent_id, agent_status in status['agents'].items():
+                        active = "✅" if agent_status.get('active') else "❌"
+                        print(f"    {active} {agent_id}")
+            else:
+                print("❌ Agent system not available")
+        
+        else:
+            # Fall back to original command processing
+            super()._process_command(user_input)
+    
+    def _show_help(self):
+        """Override to show enhanced help with agent commands."""
+        super()._show_help()
+        
+        if AGENT_INTEGRATION:
+            print("\n" + "="*60)
+            print("           AGENT SYSTEM COMMANDS")
+            print("="*60)
+            print("\nAGENT MANAGEMENT:")
+            print("  *init-agents ........... Initialize the agent system")
+            print("  *agent-status .......... Show agent system status")
+            print("\nTRADING OPERATIONS:")
+            print("  *os-d1 scan [date] ..... Run OS D1 scanner")
+            print("  *backtest [strategy] ... Run strategy backtest")
+            print("  *analyze [symbol] ...... Analyze using Lingua framework")
+            print("  *design [strategy] ..... Design new strategy")
+            print("\nEXAMPLES:")
+            print("  *init-agents")
+            print("  *os-d1 scan 2024-01-15")
+            print("  *backtest os_d1 AAPL") 
+            print("  *analyze TSLA daily")
+            print("  *design euphoric_top")
+            print("="*60)
+        else:
+            print("\n⚠️  Agent system not available")
+            print("Run setup to install agent system integration")
+
+# Override the original interface if agent integration is available
+if AGENT_INTEGRATION:
+    BMadInterface = EnhancedBMadInterface

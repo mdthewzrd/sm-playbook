@@ -626,3 +626,46 @@ The fractal nature of the Lingua framework ensures scalability across different 
 **Risk Management**: Enterprise-grade position sizing and portfolio risk controls
 
 This represents the complete systematization of discretionary trading expertise into algorithmic frameworks suitable for automated execution and continuous optimization.
+
+# =============================================================================
+# CLAUDE CODE MULTI-AGENT SYSTEM (NEW - 2025)
+# =============================================================================
+
+## 🎭 Agent System Overview
+The SM Playbook now features a production-ready multi-agent orchestration system with 5 specialized trading agents fully integrated with Claude Code.
+
+### Available Agents
+- **trading-orchestrator**: Master coordinator using Lingua framework
+- **strategy-designer**: Converts discretionary concepts to systematic strategies
+- **indicator-developer**: Creates custom indicators and EMA clouds
+- **backtesting-engineer**: Historical validation and optimization
+- **scanner-developer**: Market screening systems (OS D1, euphoric tops)
+
+### Quick Start
+```python
+# Initialize the system
+await init_sm_playbook_system()
+
+# Use trading functions
+candidates = await os_d1_scan_async()
+results = await backtest_strategy_async("os_d1", "AAPL")
+analysis = await analyze_lingua_async("TSLA", "daily")
+```
+
+### BMad Interface Commands
+```bash
+*init-agents         # Initialize agents
+*os-d1 scan          # Run OS D1 scanner
+*backtest [strategy] # Execute backtest
+*analyze [symbol]    # Lingua analysis
+*agent-status        # System status
+```
+
+### MCP Server Integration
+- Polygon.io for market data
+- TA-Lib for technical indicators
+- backtesting.py for validation
+- Notion for trade journaling
+- OsEngine for paper trading
+
+The system transforms discretionary trading concepts into systematic, automated strategies with full Claude Code orchestration.
