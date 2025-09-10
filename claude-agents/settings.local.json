@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/michaeldurante/Downloads/**)",
+      "Bash(mkdir:*)",
+      "Bash(git init:*)",
+      "Bash(code:*)",
+      "Bash(brew install:*)",
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(cp:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
